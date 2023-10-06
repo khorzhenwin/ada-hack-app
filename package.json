@@ -24,15 +24,19 @@
     "@tabler/icons-react": "^2.15.0",
     "embla-carousel-autoplay": "^7.1.0",
     "embla-carousel-react": "^7.1.0",
+    "firebase": "^10.4.0",
+    "firebase-tools": "^12.6.2",
     "google-auth-library": "^9.0.0",
     "next": "^13.5.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.47.0",
     "react-icons": "^4.8.0",
+    "socket.io": "^4.7.2",
     "zustand": "^4.3.7"
   },
   "devDependencies": {
+    "@types/react": "18.2.25",
     "eslint": "8.41.0",
     "eslint-config-next": "13.4.4"
   }
