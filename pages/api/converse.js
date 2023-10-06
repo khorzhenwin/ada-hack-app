@@ -1,4 +1,3 @@
-"use client";
 const { DiscussServiceClient } = require("@google-ai/generativelanguage");
 const { GoogleAuth } = require("google-auth-library");
 
@@ -11,14 +10,19 @@ const client = new DiscussServiceClient({
 
 const context = "";
 const examples = [];
-const messages = [];
 
 // this is a POST method
 export default function handler(req, res) {
   const prompt = req.body.prompt;
 
-  messages.push({
+  addMessage({
     content: prompt,
+    isUser: true,
+  });
+
+  addMessage({
+    content: "NEXT REQUEST",
+    isUser: false,
   });
 
   client
