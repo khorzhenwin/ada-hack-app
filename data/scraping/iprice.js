@@ -6,12 +6,13 @@ const cheerio = require("cheerio");
 
 /**
  * @param {string} product - product to be searched
- * @returns json object containing the products
+ * @param {number} pageNo - get the data of the top (x) to top (x + 2) products, x = pageNo
+ * @returns {Array<JSON>} array object containing the products
  */
-export async function getIpriceProducts(product = "") {
+export async function getIpriceProducts(product = "", pageNo = 1) {
   try {
     console.log(
-      "Starting scraping process from iprice for '+ " + product + "' ......"
+      `Starting scraping process from iprice for '${product}' ......`
     );
 
     const search_url =
@@ -28,27 +29,30 @@ export async function getIpriceProducts(product = "") {
       },
     });
 
-    var product_json = {};
+    var product_array = [];
     const $ = cheerio.load(response_request.data);
 
     // checking if there are any products found
     if ($(".zE.zF.qB").length == 0) {
       console.log(`==> No products of '${product}' found on iprice`);
-      return {};
+      return [];
     }
+
+    // The product image url
+    $(".z9.z7").each((i, e) => {
+      let temp = {};
+      temp["image"] = $(e).attr().src.replace(/(\s+)/g, " ").trim();
+      product_array.push(temp);
+    });
 
     // The product names
     $(".zE.zF.qB").each((i, e) => {
-      product_json[(i + 1).toString()] = {};
-      product_json[(i + 1).toString()]["name"] = $(e)
-        .text()
-        .replace(/(\s+)/g, " ")
-        .trim();
+      product_array[i]["name"] = $(e).text().replace(/(\s+)/g, " ").trim();
     });
 
     // The product prices
     $(".z4.nW.e7").each((i, e) => {
-      product_json[(i + 1).toString()]["price"] = $(e)
+      product_array[i]["price"] = $(e)
         .text()
         .replace(/(\s+)/g, " ")
         .replace("RM ", "")
@@ -56,36 +60,51 @@ export async function getIpriceProducts(product = "") {
         .trim();
     });
 
-    // The product store name
+    // The product rating
+    $(".g.b.t.e5.l").each((i, e) => {
+      product_array[i]["rating"] = $(e).text().replace(/(\s+)/g, " ").trim();
+    });
+
+    // The product store name (seller name)
     $(".zM.lc.qB.g").each((i, e) => {
-      product_json[(i + 1).toString()]["store"] = $(e)
+      product_array[i]["seller_name"] = $(e)
         .text()
         .replace(/(\s+)/g, " ")
         .trim();
+      product_array[i]["seller_location"] = "";
+    });
+
+    // The product page url
+    $(".zA.l4.pu.rg.zC.le").each((i, e) => {
+      product_array[i]["url"] =
+        "https://iprice.my" + $(e).attr().on.split("'")[1].trim();
     });
 
     // The product original ecommerce store
     $(".zO").each((i, e) => {
-      product_json[(i + 1).toString()]["ecommerce"] = $(e)
-        .text()
-        .replace(/(\s+)/g, " ")
-        .trim();
+      product_array[i]["ecommerce"] = $(e).text().replace(/(\s+)/g, " ").trim();
     });
 
-    // The product rating
-    $(".g.b.t.e5.l").each((i, e) => {
-      product_json[(i + 1).toString()]["rating"] = $(e)
-        .text()
-        .replace(/(\s+)/g, " ")
-        .trim();
-    });
-    // console.log(product_json);
+    // console.log(product_array);
     console.log(`Done scraping iprice for '${product}'`);
-    console.log("==> Products found: ", Object.keys(product_json).length);
+    console.log("==> Products found: ", Object.keys(product_array).length);
 
-    return product_json;
+    if (product_array.length < pageNo * 3) {
+      if (product_array.length < pageNo * 3 - 2) {
+        console.log("No more products available for the required page number");
+        return [];
+      } else {
+        return product_array.slice(pageNo * 3 - 3);
+      }
+    } else {
+      return product_array.slice(pageNo * 3 - 3, pageNo * 3);
+    }
   } catch (error) {
     console.log(error);
-    return {};
+    return [];
   }
 }
+
+// getIpriceProducts("monitor stand", 2).then((product_arr) => {
+//   console.log(product_arr);
+// });

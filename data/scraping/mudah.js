@@ -6,9 +6,10 @@ const cheerio = require("cheerio");
 
 /**
  * @param {string} product - product to be searched
+ * @param {number} pageNo - get the data of the top (x) to top (x + 2) products, x = pageNo
  * @returns json object containing the products
  */
-export async function getMudahMyProducts(product = "") {
+export async function getMudahMyProducts(product = "", pageNo = 1) {
   try {
     console.log(
       "Starting scraping process from mudah.my for '+ " + product + "' ......"
