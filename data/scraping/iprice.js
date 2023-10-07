@@ -8,7 +8,7 @@ const cheerio = require("cheerio");
  * @param {string} product - product to be searched
  * @returns json object containing the products
  */
-async function getIpriceProducts(product = "") {
+export async function getIpriceProducts(product = "") {
   try {
     console.log(
       "Starting scraping process from iprice for '+ " + product + "' ......"

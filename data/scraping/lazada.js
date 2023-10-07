@@ -12,7 +12,7 @@ function generateLazadaURL(searchQuery) {
   return url;
 }
 
-export async function scrapeLazadaProducts(userInput, pageNo = 1) {
+export async function getLazadaProducts(userInput, pageNo = 1) {
   const productURL = generateLazadaURL(userInput);
   const browser = await puppeteer.launch({ headless: "new" }); // Set headless to true or false
   const page = await browser.newPage();
