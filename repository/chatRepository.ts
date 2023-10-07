@@ -29,6 +29,16 @@ export default class ChatRepository {
   static findAllByUserId = async (id: string) =>
     await getDocs(query(this.ref, where("userId", "==", id)));
 
+  // this should always only return 1 chat
+  static findAllActiveByUserId = async (id: string) =>
+    await getDocs(
+      query(
+        this.ref,
+        where("userId", "==", id),
+        where("status", "==", "ACTIVE")
+      )
+    );
+
   static update = async (
     docRef: DocumentReference<Chat>,
     newValues: Partial<Chat>

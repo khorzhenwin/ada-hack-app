@@ -24,22 +24,20 @@ const createNewChat = (userId: string) => {
     status: "ACTIVE",
     messageHistory: [],
   };
-  // add a new chat
+
   ChatRepository.add(newChat);
+
   return newChat;
 };
 
 const findActiveChatByUserId = async (userId: string) => {
-  const chatSnapshot = await ChatRepository.findAllByUserId(userId);
+  const chatSnapshot = await ChatRepository.findAllActiveByUserId(userId);
 
-  // find the first active chat or create new chat
-  for (const chat of chatSnapshot.docs) {
-    if (chat.data() && chat.data().status === "ACTIVE") {
-      return chat.data();
-    }
+  if (chatSnapshot.docs.length > 0) {
+    return chatSnapshot.docs.at(0).data();
+  } else {
     return createNewChat(userId);
   }
-  return createNewChat(userId);
 };
 
 const updateChatToInactive = async (chatId: string) => {
@@ -70,6 +68,11 @@ export default async function handler(req, res) {
       content: signal,
     });
     updateChatToInactive(chat.id);
+    res.status(200).json({
+      prompt: prompt,
+      response: "Chat has ended with status of INACTIVE",
+    });
+    return;
   }
 
   client
