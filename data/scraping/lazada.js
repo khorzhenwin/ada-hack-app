@@ -19,7 +19,7 @@ export async function getLazadaProducts(userInput, pageNo = 1) {
 
   // Navigate to the URL
   await page.goto(productURL, {
-    waitUntil: ["domcontentloaded", "networkidle2"],
+    waitUntil: ["domcontentloaded"],
   });
 
   // Extract JSON data from the page
@@ -61,7 +61,3 @@ export async function getLazadaProducts(userInput, pageNo = 1) {
   await browser.close();
   return all_products;
 }
-
-getLazadaProducts("shoes", 2).then((product_arr) => {
-  console.log(product_arr);
-});
