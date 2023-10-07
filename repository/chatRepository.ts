@@ -26,6 +26,9 @@ export default class ChatRepository {
   static findById = async (id: string) =>
     (await getDocs(query(this.ref, where("id", "==", id)))).docs.at(0);
 
+  static findAllByUserId = async (id: string) =>
+    await getDocs(query(this.ref, where("userId", "==", id)));
+
   static update = async (
     docRef: DocumentReference<Chat>,
     newValues: Partial<Chat>
