@@ -13,6 +13,7 @@ import {
   runTransaction,
   where,
 } from "firebase/firestore";
+import CartItem from "../interfaces/cartItem";
 
 export const cartCollectionPath = "cart";
 
@@ -29,15 +30,17 @@ export default class CartRepository {
   static findAllByUserId = async (id: string) =>
     await getDocs(query(this.ref, where("userId", "==", id)));
 
-  // this should always only return 1 chat
-  static findAllActiveByUserId = async (id: string) =>
-    await getDocs(
-      query(
-        this.ref,
-        where("userId", "==", id),
-        where("status", "==", "ACTIVE")
-      )
-    );
+  static findByChatId = async (id: string) =>
+    (await getDocs(query(this.ref, where("chatId", "==", id)))).docs.at(0);
+
+  static findCartItemsByChatId = async (id: string) =>
+    (await getDocs(query(this.ref, where("chatId", "==", id)))).docs
+      .at(0)
+      .data().cartItems;
+
+  static findCartItemsById = async (id: string) =>
+    (await getDocs(query(this.ref, where("id", "==", id)))).docs.at(0).data()
+      .cartItems;
 
   static update = async (
     docRef: DocumentReference<Cart>,
@@ -52,13 +55,30 @@ export default class CartRepository {
     return await addDoc(CartRepository.ref, values);
   };
 
-  static addMessage = async (id: string, message: string) => {
-    const docRef = await CartRepository.findById(id);
-    const newMessage = {
-      content: message,
-    };
+  static addItem = async (chatId: string, item: CartItem) => {
+    const docRef = await CartRepository.findByChatId(chatId);
     await CartRepository.update(docRef!.ref, {
-        // cartItems: [...docRef!.data().cartItems, newMessage],
+      cartItems: [...docRef!.data().cartItems, item],
+    });
+  };
+
+  static removeItemByChatId = async (chatId: string, itemId: string) => {
+    const docRef = await CartRepository.findByChatId(chatId);
+    const newCartItems = docRef!
+      .data()
+      .cartItems.filter((item) => item.id !== itemId);
+    await CartRepository.update(docRef!.ref, {
+      cartItems: newCartItems,
+    });
+  };
+
+  static removeItemById = async (id: string, itemId: string) => {
+    const docRef = await CartRepository.findById(id);
+    const newCartItems = docRef!
+      .data()
+      .cartItems.filter((item) => item.id !== itemId);
+    await CartRepository.update(docRef!.ref, {
+      cartItems: newCartItems,
     });
   };
 
