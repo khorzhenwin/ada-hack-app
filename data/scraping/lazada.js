@@ -18,7 +18,9 @@ export async function getLazadaProducts(userInput, pageNo = 1) {
   const page = await browser.newPage();
 
   // Navigate to the URL
-  await page.goto(productURL, { waitUntil: "domcontentloaded" });
+  await page.goto(productURL, {
+    waitUntil: ["domcontentloaded", "networkidle2"],
+  });
 
   // Extract JSON data from the page
   const req = await page.evaluate(() => {
@@ -59,3 +61,7 @@ export async function getLazadaProducts(userInput, pageNo = 1) {
   await browser.close();
   return all_products;
 }
+
+getLazadaProducts("shoes", 2).then((product_arr) => {
+  console.log(product_arr);
+});

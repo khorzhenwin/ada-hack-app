@@ -12,7 +12,7 @@ const cheerio = require("cheerio");
 export async function getIpriceProducts(product = "", pageNo = 1) {
   try {
     console.log(
-      "Starting scraping process from iprice for '+ " + product + "' ......"
+      `Starting scraping process from iprice for '${product}' ......`
     );
 
     const search_url =
