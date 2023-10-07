@@ -3,19 +3,19 @@ import {
   getIpriceProducts,
   getMudahMyProducts,
   getLazadaProducts,
-} from "../../data/scraping/";
+} from "../../data/scraping";
 import { v4 as uuidv4 } from "uuid";
 import RecommendationsRepository from "../../repository/recommendationsRepository";
 import Recommendations from "../../interfaces/recommendations";
 
-// POST Method
+// GET Method
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
+  if (req.method !== "GET") {
     res.status(405).json({ message: "Method not allowed" });
     return;
   }
 
-  const { category, pageNo } = req.body;
+  const { category, pageNo = 1 } = req.query;
 
   const lazada = await getLazadaProducts(category, pageNo);
   const carousell = await getCarousellProducts(category);
