@@ -1,6 +1,5 @@
 import ChatRepository from "../../repository/chatRepository";
 import Chat from "../../interfaces/chat";
-import { Query, QueryDocumentSnapshot } from "firebase/firestore";
 import Context from "../../interfaces/context";
 import { v4 as uuidv4 } from "uuid";
 
@@ -49,9 +48,15 @@ const updateChatToInactive = async (chatId: string) => {
 
 // this is a POST method
 export default async function handler(req, res) {
-  const prompt = req.body.prompt;
-  const userId = req.body.userId ? req.body.userId : "default";
-  const signal: string = req.body.signal ? req.body.signal : "NEXT REQUEST";
+  if (req.method !== "POST") {
+    res.status(405).json({ message: "Method not allowed" });
+    return;
+  }
+
+  let { prompt, userId, signal } = req.body;
+  userId = userId ? userId : "default";
+  signal = signal ? signal : "NEXT REQUEST";
+
   const chat: Chat = await findActiveChatByUserId(userId);
   const messages: Context[] | any = chat.messageHistory;
 
@@ -69,7 +74,6 @@ export default async function handler(req, res) {
     });
     updateChatToInactive(chat.id);
     res.status(200).json({
-      prompt: prompt,
       response: "Chat has ended with status of INACTIVE",
     });
     return;
