@@ -22,6 +22,8 @@
     "@mantine/next": "^6.0.7",
     "@mantine/notifications": "^6.0.7",
     "@tabler/icons-react": "^2.15.0",
+    "axios": "^1.5.1",
+    "cheerio": "^1.0.0-rc.12",
     "embla-carousel-autoplay": "^7.1.0",
     "embla-carousel-react": "^7.1.0",
     "firebase": "^10.4.0",
