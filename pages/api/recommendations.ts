@@ -16,6 +16,10 @@ export default async function handler(req, res) {
   }
 
   const { category, pageNo = 1 } = req.query;
+  if (!category) {
+    res.status(400).json({ message: "Missing query parameters" });
+    return;
+  }
 
   const lazada = await getLazadaProducts(category, pageNo);
   const carousell = await getCarousellProducts(category);
