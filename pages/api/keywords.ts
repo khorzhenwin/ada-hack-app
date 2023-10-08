@@ -20,7 +20,7 @@ const stopSequences = [];
     const input = req.body.input;
   
     const promptString = 
-    `Pretend you are a consultant chatbot that helps in researching and recommending what the user should purchase, give a list of possible keywords for them to use and search. 
+    `Pretend you are a consultant chatbot that helps in researching and recommending what the user from Malaysia should purchase through e-commerce website, give a list of possible keywords for them to use and search. 
     For example:
     User: I feel decorating for my desk in my bed room for better study vibes or environment.
   
@@ -40,10 +40,10 @@ const stopSequences = [];
   
     client.generateText({
       model: MODEL_NAME,
-      temperature: 0.7,
+      temperature: 0.75,
       candidateCount: 1,
       top_k: 40,
-      top_p: 0.95,
+      top_p: 0.8,
       max_output_tokens: 40,
       stop_sequences: stopSequences,
       safety_settings: [
