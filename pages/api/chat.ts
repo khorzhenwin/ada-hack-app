@@ -15,7 +15,8 @@ const client = new DiscussServiceClient({
   authClient: new GoogleAuth().fromAPIKey(API_KEY),
 });
 
-const context = "";
+const context =
+  "An e-commerce shop assistant that recommends products to users based on their preferences.";
 const examples = [];
 
 const createNewChat = (userId: string) => {
