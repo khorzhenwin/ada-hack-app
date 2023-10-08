@@ -23,7 +23,7 @@ async function sendWAmessage(text, phoneNumber) {
   req["platform"] = "WA";
   req["type"] = "text";
   req["from"] = "60136959014";
-  req["to"] = phoneNumber;
+  req["to"] = phoneNumber ? phoneNumber : "60175228785";
   req["text"] = text ? text : "Boey so handsome can i have one night with you?";
 
   const waAPIKey =
