@@ -12,7 +12,7 @@ async function getLazadaAPI(category = "clothes", page = "1") {
   }
 }
 
-export async function getLazadaProducts(userInput, pageNo = 1, setOf40) {
+export async function getLazadaProductsFromAPI(userInput, pageNo = 1, setOf40) {
   const res = await getLazadaAPI(userInput, setOf40);
   const items = res.mods.listItems;
   const products = [];

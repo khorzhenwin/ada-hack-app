@@ -1,1 +1,1 @@
-export { getLazadaProducts } from "./lazada.js";
+export { getLazadaProductsFromAPI } from "./lazada.js";

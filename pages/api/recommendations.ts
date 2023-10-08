@@ -2,8 +2,9 @@ import {
   getCarousellProducts,
   getIpriceProducts,
   getMudahMyProducts,
+  getLazadaProducts,
 } from "../../data/scraping";
-import { getLazadaProducts } from "../../data/api";
+import { getLazadaProductsFromAPI } from "../../data/api";
 import { v4 as uuidv4 } from "uuid";
 import RecommendationsRepository from "../../repository/recommendationsRepository";
 import Recommendations from "../../interfaces/recommendations";
@@ -21,10 +22,15 @@ export default async function handler(req, res) {
     return;
   }
 
-  const lazada = await getLazadaProducts(category, pageNo);
-  const carousell = await getCarousellProducts(category);
-  const iprice = await getIpriceProducts(category);
-  const mudah = await getMudahMyProducts(category);
+  let lazada;
+  try {
+    lazada = await getLazadaProductsFromAPI(category, pageNo);
+  } catch (error) {
+    lazada = await getLazadaProducts(category, pageNo);
+  }
+  const carousell = await getCarousellProducts(category, pageNo);
+  const iprice = await getIpriceProducts(category, pageNo);
+  const mudah = await getMudahMyProducts(category, pageNo);
   // currently, recommendations does not need to be stored as they will be added directly to the cart after user selects them
 
   const response = {
