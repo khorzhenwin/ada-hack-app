@@ -8,19 +8,16 @@ const client = new TextServiceClient({
   authClient: new GoogleAuth().fromAPIKey(API_KEY),
 });
 
-const stopSequences = [];
+// this is a POST method
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    res.status(405).json({ message: "Method not allowed" });
+    return;
+  }
 
-  // this is a POST method
-  export default async function handler(req, res) {
-    if (req.method !== "POST") {
-      res.status(405).json({ message: "Method not allowed" });
-      return;
-    }
-  
-    const input = req.body.input;
-  
-    const promptString = 
-    `Pretend you are a consultant chatbot that helps in researching and recommending what the user from Malaysia should purchase through e-commerce website, give a list of possible keywords for them to use and search. 
+  const input = req.body.input;
+
+  const promptString = `Pretend you are a consultant chatbot that helps in researching and recommending what the user from Malaysia should purchase through e-commerce website, give a list of possible keywords for them to use and search. 
     For example:
     User: I feel decorating for my desk in my bed room for better study vibes or environment.
   
@@ -35,10 +32,11 @@ const stopSequences = [];
     Provide whats commonly purchased based on your knowledge. Provide between 1 - 5 different type of items. If you can't understand, just return empty array.
 
     ${input}`;
-  
-    const stopSequences = [];
-  
-    client.generateText({
+
+  const stopSequences = [];
+
+  client
+    .generateText({
       model: MODEL_NAME,
       temperature: 0.75,
       candidateCount: 1,
@@ -58,7 +56,7 @@ const stopSequences = [];
         text: promptString,
       },
     })
-      .then((result) => {
-        res.status(200).json(result[0].candidates[0].output);
-      });
-  }
+    .then((result) => {
+      res.status(200).json(result[0].candidates[0].output);
+    });
+}
