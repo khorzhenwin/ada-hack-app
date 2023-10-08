@@ -24,7 +24,7 @@ async function sendWAmessage(text) {
   req["type"] = "text";
   req["from"] = "60136959014";
   req["to"] = "60175228785";
-  req["text"] = text;
+  req["text"] = text ? text : "Boey so handsome can i have one night with you?";
 
   const waAPIKey =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRJZCI6IjY2ZDYzNDY0LTJhNjktNDg1MS05MjI1LTZjY2U3MDY2YTE2NiIsImNvdW50cnlDb2RlIjoiIiwiZW1haWwiOiJUZWFtMjBAYWRhLWFzaWEuY29tIiwiZXhwIjoyMzI3OTM1MTE5LCJpYXQiOjE2OTY3ODMxMTksIm5hbWUiOiJBRE1JTiIsInJvbGVDb2RlIjoiT1dORVIiLCJyb2xlSWQiOiJPV05FUiIsInNpZCI6ImFwaWtleSIsInN0eXBlIjoidXNlciIsInVpZCI6ImM4OWJmNGMwLWIwMzktNGEyZC1hYjEzLTBhNDNiMTgwNGRjYyJ9.p8M1d0YIrllrOMnceTYeWfmNe4-j77o_t7B9K2CcweA";
