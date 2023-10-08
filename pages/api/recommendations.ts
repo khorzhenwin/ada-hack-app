@@ -2,8 +2,8 @@ import {
   getCarousellProducts,
   getIpriceProducts,
   getMudahMyProducts,
-  getLazadaProducts,
 } from "../../data/scraping";
+import { getLazadaProducts } from "../../data/api";
 import { v4 as uuidv4 } from "uuid";
 import RecommendationsRepository from "../../repository/recommendationsRepository";
 import Recommendations from "../../interfaces/recommendations";
