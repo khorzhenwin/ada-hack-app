@@ -14,7 +14,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  sendWAmessage(text);
+ await sendWAmessage(text);
   res.status(200).json(text);
 }
 
