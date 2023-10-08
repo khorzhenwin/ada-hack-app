@@ -5,7 +5,7 @@ export default async function handler(req, res) {
   //     return;
   //   }
 
-  const { text,userId, customerName } = req.body;
+  const { text, phoneNumber} = req.body;
 
   // Check bearer token
   const bearerToken = req.headers.authorization;
@@ -14,16 +14,16 @@ export default async function handler(req, res) {
     return;
   }
 
-  await sendWAmessage(text, userId);
+  await sendWAmessage(text, phoneNumber);
   return res.status(200).json({ message: "success" });
 }
 
-async function sendWAmessage(text, userId) {
+async function sendWAmessage(text, phoneNumber) {
   const req = {};
   req["platform"] = "WA";
   req["type"] = "text";
   req["from"] = "60136959014";
-  req["to"] = userId;
+  req["to"] = phoneNumber;
   req["text"] = text ? text : "Boey so handsome can i have one night with you?";
 
   const waAPIKey =
