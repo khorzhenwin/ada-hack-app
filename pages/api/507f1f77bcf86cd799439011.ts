@@ -18,17 +18,16 @@ export default async function handler(req, res) {
     const requestData = JSON.parse(reqBodyString);
 
     // Respond with the parsed JSON data
-    res.status(200).json(requestData);
-
     sendWAmessage(requestData);
 
+    res.status(200).json(requestData);
   } catch (error) {
     res.status(400).json({ message: "Invalid JSON data in the request body" });
   }
 }
 
-
 async function sendWAmessage(req) {
+  req.body = {}
   req.body.platform = 'WA';
   req.body.type = 'text';
   req.body.from = '60136959014'
