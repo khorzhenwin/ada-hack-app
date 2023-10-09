@@ -1,11 +1,13 @@
+const env = require("../../util/env.json");
+
 // POST Method
 export default async function handler(req, res) {
-  //   if (req.method !== "POST") {
-  //     res.status(405).json({ message: "Method not allowed" });
-  //     return;
-  //   }
+  if (req.method !== "POST") {
+    res.status(405).json({ message: "Only POST Method Allowed" });
+    return;
+  }
 
-  const { text, phoneNumber} = req.body;
+  const { text, to } = req.body;
 
   // Check bearer token
   const bearerToken = req.headers.authorization;
@@ -14,37 +16,97 @@ export default async function handler(req, res) {
     return;
   }
 
-  await sendWAmessage(text, phoneNumber);
-  return res.status(200).json({ message: "success" });
-}
+  // check if text contains "recommend", "recommendations", "recommendation" or "suggestion" or "suggestions" or "suggestion" or "suggest" or "suggests" or "suggested"
+  const chatWithLLM = [
+    "recommend",
+    "recommendations",
+    "recommendation",
+    "suggestion",
+    "suggestions",
+    "suggestion",
+    "suggest",
+    "suggests",
+    "suggested",
+    "e-commerce",
+    "ecommerce",
+    "platforms",
+    "Malaysia",
+  ];
 
-async function sendWAmessage(text, phoneNumber) {
-  const req = {};
-  req["platform"] = "WA";
-  req["type"] = "text";
-  req["from"] = "60136959014";
-  req["to"] = phoneNumber ? phoneNumber : "60175228785";
-  req["text"] = text ? text : "Boey so handsome can i have one night with you?";
+  const words = text.split(" ");
+  const hasRecommendation = words.some((word) => chatWithLLM.includes(word));
 
-  const waAPIKey =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRJZCI6IjY2ZDYzNDY0LTJhNjktNDg1MS05MjI1LTZjY2U3MDY2YTE2NiIsImNvdW50cnlDb2RlIjoiIiwiZW1haWwiOiJUZWFtMjBAYWRhLWFzaWEuY29tIiwiZXhwIjoyMzI3OTM1MTE5LCJpYXQiOjE2OTY3ODMxMTksIm5hbWUiOiJBRE1JTiIsInJvbGVDb2RlIjoiT1dORVIiLCJyb2xlSWQiOiJPV05FUiIsInNpZCI6ImFwaWtleSIsInN0eXBlIjoidXNlciIsInVpZCI6ImM4OWJmNGMwLWIwMzktNGEyZC1hYjEzLTBhNDNiMTgwNGRjYyJ9.p8M1d0YIrllrOMnceTYeWfmNe4-j77o_t7B9K2CcweA";
+  if (!hasRecommendation) {
+    // chat with LLM by calling /api/chat
+    const body = {
+      prompt: text,
+      userId: to,
+    };
 
-  const endpoint = "https://bizmsgapi.ada-asia.com/prod/message";
+    const chatEndpoint = `${env.path.production}/api/chat`;
+    const chatResponse = await fetch(chatEndpoint, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }).then((res) => res.json());
 
-  const header = {
-    "Content-Type": "application/json", // Set Content-Type to application/json
-    Authorization: `Bearer ${waAPIKey}`,
-  };
+    // call /api/whatsapp to send message to user
+    const message = {
+      to: to,
+      text: chatResponse.response,
+    };
+    const whatsappEndpoint = `${env.path.production}/api/whatsapp`;
+    await fetch(whatsappEndpoint, {
+      method: "POST",
+      body: JSON.stringify(message),
+    }).then((res) => res.json());
 
-  const res = await fetch(endpoint, {
-    method: "POST",
-    headers: header,
-    body: JSON.stringify(req),
-  });
-
-  if (res.status === 200 || res.status === 201) {
-    return res.json();
+    return res.status(200).json({ message: "success" });
   } else {
-    return null;
+    // get keywords from /api/keywords
+    const keywordsEndpoint = `${env.path.production}/api/keywords`;
+    const keywordsResponse = await fetch(keywordsEndpoint, {
+      method: "POST",
+      body: JSON.stringify({ input: text }),
+    }).then((res) => res.json());
+
+    const recommendations = [];
+    let counter = 0;
+    // fetch recommendations from /api/recommendations
+    for (const keyword of keywordsResponse.keywords) {
+      // push 1 recommendation from each source for each keyword
+      const recommendationsEndpoint = `${env.path.production}/api/recommendations?category=${keyword}`;
+      const recommendationsResponse = await fetch(recommendationsEndpoint, {
+        method: "GET",
+      }).then((res) => res.json());
+      recommendations.push(recommendationsResponse.lazada[0]);
+      recommendations.push(recommendationsResponse.carousell[0]);
+      recommendations.push(recommendationsResponse.mudah[0]);
+      recommendations.push(recommendationsResponse.iprice[0]);
+      counter++;
+
+      // if counter is 3, break. Failsafe from spam calling
+      if (counter === 3) break;
+    }
+
+    // call /api/whatsapp to send message to user
+    const message = {
+      to: to,
+      text: craftRecommendationsMessage(recommendations),
+    };
+    const whatsappEndpoint = `${env.path.production}/api/whatsapp`;
+    await fetch(whatsappEndpoint, {
+      method: "POST",
+      body: JSON.stringify(message),
+    }).then((res) => res.json());
+
+    return res.status(200).json({ message: "success" });
   }
 }
+
+const craftRecommendationsMessage = (recommendations) => {
+  let message = "Here are some recommendations for you:\n\n";
+  for (const recommendation of recommendations) {
+    message += `${recommendation.name}\n${recommendation.price}\n${recommendation.url}\n\n`;
+  }
+  return message;
+};

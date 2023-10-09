@@ -57,6 +57,6 @@ export default async function handler(req, res) {
       },
     })
     .then((result) => {
-      res.status(200).json(result[0].candidates[0].output);
+      res.status(200).json({ keywords: result[0].candidates[0].output });
     });
 }
