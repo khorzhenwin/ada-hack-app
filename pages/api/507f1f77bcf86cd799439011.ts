@@ -5,7 +5,9 @@ export default async function handler(req, res) {
   const { text, to } = req.body;
 
   // Check bearer token
-  const bearerToken = req.headers.authorization;
+  const bearerToken = req.headers.Authorization
+    ? req.headers.Authorization
+    : req.headers.authorization;
   if (!bearerToken || bearerToken !== "Ada@2023") {
     res.status(401).json({ message: "Unauthorized" });
     return;
