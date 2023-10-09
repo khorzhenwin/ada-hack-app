@@ -29,7 +29,7 @@ export default async function handler(req, res) {
     User: I want to purchase something for my newly decorated kitchen.
     output: Refrigerator,Oven,Plates,Dish Towel,Utensils
   
-    Provide whats commonly purchased based on your knowledge. Provide between 1 - 5 different type of items. If you can't understand, just return empty array.
+    Provide whats commonly purchased based on your knowledge. Provide between 1 - 5 different type of items. Every comma should not have any blank spaces. If you can't understand, just return empty response.
 
     ${input}`;
 

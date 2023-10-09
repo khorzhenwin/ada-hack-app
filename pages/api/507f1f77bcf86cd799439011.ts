@@ -3,7 +3,7 @@ import { is } from "cheerio/lib/api/traversing";
 const craftRecommendationsMessage = (recommendations) => {
   let message = "Here are some recommendations for you:\n\n";
   for (const recommendation of recommendations) {
-    message += `${recommendation.name}\n${recommendation.price}\n${recommendation.url}\n\n`;
+    message += `${recommendation.name}\nRM ${recommendation.price}\n${recommendation.url}\nSource: ${recommendation.source}\n\n`;
   }
   return message;
 };
@@ -124,12 +124,26 @@ export default async function handler(req, res) {
     // fetch recommendations from /api/recommendations
     for (const keyword of keywords) {
       // push 1 recommendation from each source for each keyword
-      const recommendationsResponse = await callRecommendationsAPI(keyword);
+      const recommendationsResponse = await callRecommendationsAPI(
+        keyword.toLowerCase()
+      );
 
-      recommendations.push(recommendationsResponse.lazada[0]);
-      recommendations.push(recommendationsResponse.carousell[0]);
-      recommendations.push(recommendationsResponse.mudah[0]);
-      recommendations.push(recommendationsResponse.iprice[0]);
+      if (recommendationsResponse.lazada.length > 0) {
+        recommendationsResponse.lazada[0].source = "Lazada";
+        recommendations.push(recommendationsResponse.lazada[0]);
+      }
+      if (recommendationsResponse.carousell.length > 0) {
+        recommendationsResponse.carousell[0].source = "Carousell";
+        recommendations.push(recommendationsResponse.carousell[0]);
+      }
+      if (recommendationsResponse.mudah.length > 0) {
+        recommendationsResponse.mudah[0].source = "Mudah.my";
+        recommendations.push(recommendationsResponse.mudah[0]);
+      }
+      if (recommendationsResponse.iprice.length > 0) {
+        recommendationsResponse.iprice[0].source = "iPrice";
+        recommendations.push(recommendationsResponse.iprice[0]);
+      }
       counter++;
 
       // if counter is 3, break. Failsafe from spam calling
