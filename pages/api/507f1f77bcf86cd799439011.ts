@@ -1,7 +1,17 @@
-const env = require("../../util/env.json");
+const craftRecommendationsMessage = (recommendations) => {
+  let message = "Here are some recommendations for you:\n\n";
+  for (const recommendation of recommendations) {
+    message += `${recommendation.name}\n${recommendation.price}\n${recommendation.url}\n\n`;
+  }
+  return message;
+};
 
 // POST Method
 export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    res.status(405).json({ message: "Method not supported" });
+    return;
+  }
   const { text, to } = req.body;
 
   // Check bearer token
@@ -40,7 +50,7 @@ export default async function handler(req, res) {
       userId: to,
     };
 
-    const chatEndpoint = `${env.path.production}/api/chat`;
+    const chatEndpoint = "https://ada-hack-app.vercel.app/api/chat";
     const chatResponse = await fetch(chatEndpoint, {
       method: "POST",
       body: JSON.stringify(body),
@@ -51,16 +61,16 @@ export default async function handler(req, res) {
       to: to,
       text: chatResponse.response,
     };
-    const whatsappEndpoint = `${env.path.production}/api/whatsapp`;
+    const whatsappEndpoint = "https://ada-hack-app.vercel.app/api/whatsapp";
+    res.status(200).json({ message: "success" });
     await fetch(whatsappEndpoint, {
       method: "POST",
       body: JSON.stringify(message),
     }).then((res) => res.json());
-
-    return res.status(200).json({ message: "success" });
+    return;
   } else {
     // get keywords from /api/keywords
-    const keywordsEndpoint = `${env.path.production}/api/keywords`;
+    const keywordsEndpoint = "https://ada-hack-app.vercel.app/api/keywords";
     const keywordsResponse = await fetch(keywordsEndpoint, {
       method: "POST",
       body: JSON.stringify({ input: text }),
@@ -71,7 +81,8 @@ export default async function handler(req, res) {
     // fetch recommendations from /api/recommendations
     for (const keyword of keywordsResponse.keywords) {
       // push 1 recommendation from each source for each keyword
-      const recommendationsEndpoint = `${env.path.production}/api/recommendations?category=${keyword}`;
+      const recommendationsEndpoint =
+        "https://ada-hack-app.vercel.app/api/recommendations?category=${keyword}";
       const recommendationsResponse = await fetch(recommendationsEndpoint, {
         method: "GET",
       }).then((res) => res.json());
@@ -90,20 +101,12 @@ export default async function handler(req, res) {
       to: to,
       text: craftRecommendationsMessage(recommendations),
     };
-    const whatsappEndpoint = `${env.path.production}/api/whatsapp`;
+    const whatsappEndpoint = "https://ada-hack-app.vercel.app/api/whatsapp";
+    res.status(200).json({ message: "success" });
     await fetch(whatsappEndpoint, {
       method: "POST",
       body: JSON.stringify(message),
     }).then((res) => res.json());
-
-    return res.status(200).json({ message: "success" });
+    return;
   }
 }
-
-const craftRecommendationsMessage = (recommendations) => {
-  let message = "Here are some recommendations for you:\n\n";
-  for (const recommendation of recommendations) {
-    message += `${recommendation.name}\n${recommendation.price}\n${recommendation.url}\n\n`;
-  }
-  return message;
-};
