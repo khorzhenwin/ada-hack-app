@@ -6,6 +6,56 @@ const craftRecommendationsMessage = (recommendations) => {
   return message;
 };
 
+const callWhatsAppAPI = async (to, response) => {
+  const message = {
+    to: to,
+    text: response,
+  };
+
+  const whatsappEndpoint = "https://ada-hack-app.vercel.app/api/whatsapp";
+  const res = await fetch(whatsappEndpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(message),
+  });
+  return Promise.resolve(res.json());
+};
+
+const callChatAPI = async (text, to) => {
+  const body = {
+    prompt: text,
+    userId: to,
+  };
+
+  const chatEndpoint = "https://ada-hack-app.vercel.app/api/chat";
+  const chatResponse = await fetch(chatEndpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+
+  return Promise.resolve(chatResponse.json());
+};
+
+const callKeywordsAPI = async (text) => {
+  const keywordsEndpoint = "https://ada-hack-app.vercel.app/api/keywords";
+  const keywordsResponse = await fetch(keywordsEndpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ input: text }),
+  });
+  return Promise.resolve(keywordsResponse.json());
+};
+
+const callRecommendationsAPI = async (keyword) => {
+  const recommendationsEndpoint = `https://ada-hack-app.vercel.app/api/recommendations?category=${keyword}`;
+  const recommendationsResponse = await fetch(recommendationsEndpoint, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
+  return Promise.resolve(recommendationsResponse.json());
+};
+
 // POST Method
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -45,49 +95,25 @@ export default async function handler(req, res) {
 
   if (!hasRecommendation) {
     // chat with LLM by calling /api/chat
-    const body = {
-      prompt: text,
-      userId: to,
-    };
-
-    const chatEndpoint = "https://ada-hack-app.vercel.app/api/chat";
-    const chatResponse = await fetch(chatEndpoint, {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then((res) => res.json());
+    const chatResponse = await callChatAPI(text, to);
 
     // call /api/whatsapp to send message to user
-    const message = {
-      to: to,
-      text: chatResponse.response,
-    };
-    const whatsappEndpoint = "https://ada-hack-app.vercel.app/api/whatsapp";
-    res.status(200).json({ message: "success" });
-    await fetch(whatsappEndpoint, {
-      method: "POST",
-      body: JSON.stringify(message),
-    }).then((res) => res.json());
-    return;
+    await callWhatsAppAPI(to, chatResponse.response);
+
+    return res.status(200).json({ message: "success" });
   } else {
     // get keywords from /api/keywords
-    const keywordsEndpoint = "https://ada-hack-app.vercel.app/api/keywords";
-    const keywordsResponse = await fetch(keywordsEndpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ input: text }),
-    }).then((res) => res.json());
+    const keywordsResponse = await callKeywordsAPI(text);
+    const keywords = keywordsResponse.keywords.split(",");
 
     const recommendations = [];
     let counter = 0;
 
     // fetch recommendations from /api/recommendations
-    for (const keyword of keywordsResponse.keywords.split(",")) {
+    for (const keyword of keywords) {
       // push 1 recommendation from each source for each keyword
-      const recommendationsEndpoint =
-        "/api/recommendations?category=" + keyword;
-      const recommendationsResponse = await fetch(recommendationsEndpoint, {
-        method: "GET",
-      }).then((res) => res.json());
+      const recommendationsResponse = await callRecommendationsAPI(keyword);
+
       recommendations.push(recommendationsResponse.lazada[0]);
       recommendations.push(recommendationsResponse.carousell[0]);
       recommendations.push(recommendationsResponse.mudah[0]);
@@ -99,16 +125,7 @@ export default async function handler(req, res) {
     }
 
     // call /api/whatsapp to send message to user
-    const message = {
-      to: to,
-      text: craftRecommendationsMessage(recommendations),
-    };
-    const whatsappEndpoint = "https://ada-hack-app.vercel.app/api/whatsapp";
-    res.status(200).json({ message: "success" });
-    await fetch(whatsappEndpoint, {
-      method: "POST",
-      body: JSON.stringify(message),
-    }).then((res) => res.json());
+    await callWhatsAppAPI(to, craftRecommendationsMessage(recommendations));
     return;
   }
 }

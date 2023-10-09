@@ -22,12 +22,12 @@ export default async function handler(req, res) {
     User: I feel decorating for my desk in my bed room for better study vibes or environment.
   
     From the input above, possible keyword to search and purchase is : desk organizer, desk lamp, bulletin board, study chair, etc.
-    So provide back a keyword in array like:
-    ["Desk Organizer", "Desk Lamp", "Bulletin Board", "Study Chair"]
+    So provide back a keyword in a sentence split with comma like:
+    Desk Organizer, Desk Lamp, Bulletin Board, Study Chair
   
     Another Example:
     User: I want to purchase something for my newly decorated kitchen.
-    output: ["Refrigerator", "Oven", "Plates", "Dish Towel", "Utensils"]
+    output: Refrigerator, Oven, Plates, Dish Towel, Utensils
   
     Provide whats commonly purchased based on your knowledge. Provide between 1 - 5 different type of items. If you can't understand, just return empty array.
 
@@ -58,9 +58,8 @@ export default async function handler(req, res) {
     })
     .then((result) => {
       // parse as array before returning
-      const removedBrackets = result[0].candidates[0].output
-        .replace("[", "")
-        .replace("]", "");
+      const removedBrackets = result[0].candidates[0].output;
+      console.log(removedBrackets);
       res.status(200).json({ keywords: removedBrackets });
     });
 }
