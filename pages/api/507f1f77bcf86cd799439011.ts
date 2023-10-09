@@ -2,11 +2,6 @@ const env = require("../../util/env.json");
 
 // POST Method
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    res.status(405).json({ message: "Only POST Method Allowed" });
-    return;
-  }
-
   const { text, to } = req.body;
 
   // Check bearer token
