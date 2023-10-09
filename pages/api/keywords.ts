@@ -57,6 +57,10 @@ export default async function handler(req, res) {
       },
     })
     .then((result) => {
-      res.status(200).json({ keywords: result[0].candidates[0].output });
+      // parse as array before returning
+      const removedBrackets = result[0].candidates[0].output
+        .replace("[", "")
+        .replace("]", "");
+      res.status(200).json({ keywords: removedBrackets });
     });
 }

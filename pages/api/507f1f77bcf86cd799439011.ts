@@ -73,17 +73,18 @@ export default async function handler(req, res) {
     const keywordsEndpoint = "https://ada-hack-app.vercel.app/api/keywords";
     const keywordsResponse = await fetch(keywordsEndpoint, {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ input: text }),
     }).then((res) => res.json());
 
     const recommendations = [];
     let counter = 0;
+
     // fetch recommendations from /api/recommendations
-    for (const keyword of keywordsResponse.keywords) {
+    for (const keyword of keywordsResponse.keywords.split(",")) {
       // push 1 recommendation from each source for each keyword
       const recommendationsEndpoint =
-        "https://ada-hack-app.vercel.app/api/recommendations?category=" +
-        keyword;
+        "/api/recommendations?category=" + keyword;
       const recommendationsResponse = await fetch(recommendationsEndpoint, {
         method: "GET",
       }).then((res) => res.json());
