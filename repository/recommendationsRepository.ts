@@ -31,6 +31,9 @@ export default class RecommendationsRepository {
   static findAllByChatId = async (id: string) =>
     await getDocs(query(this.ref, where("chatId", "==", id)));
 
+  static findByUserId = async (id: string) =>
+    (await getDocs(query(this.ref, where("userId", "==", id)))).docs.at(0);
+
   static update = async (
     docRef: DocumentReference<Recommendations>,
     newValues: Partial<Recommendations>
