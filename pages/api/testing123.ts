@@ -12,24 +12,22 @@ export default async function handler(req, res) {
     res.status(401).json({ message: "Unauthorized" });
     return;
   }
-
-  const stringifiedBody = JSON.stringify(req.body);
-
-  await sendWAmessage(stringifiedBody, phoneNumber.toString());
+  
+  const stringifiedText = JSON.stringify(text);
+  
+  await sendWAmessage(stringifiedText, phoneNumber.toString());
 
   console.log(req.body);
   return res.status(200).json({ message: "success" });
 }
 
 async function sendWAmessage(text, phoneNumber) {
-  const parsedText = JSON.parse(text);
-
   const req = {};
   req["platform"] = "WA";
   req["type"] = "text";
   req["from"] = "60136959014";
   req["to"] = phoneNumber;
-  req["text"] = parsedText ? parsedText : "Boey so handsome can i have one night with you?";
+  req["text"] = text ? text : "Boey so handsome can i have one night with you?";
 
   const waAPIKey =
     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRJZCI6IjY2ZDYzNDY0LTJhNjktNDg1MS05MjI1LTZjY2U3MDY2YTE2NiIsImNvdW50cnlDb2RlIjoiIiwiZW1haWwiOiJUZWFtMjBAYWRhLWFzaWEuY29tIiwiZXhwIjoyMzI3OTM1MTE5LCJpYXQiOjE2OTY3ODMxMTksIm5hbWUiOiJBRE1JTiIsInJvbGVDb2RlIjoiT1dORVIiLCJyb2xlSWQiOiJPV05FUiIsInNpZCI6ImFwaWtleSIsInN0eXBlIjoidXNlciIsInVpZCI6ImM4OWJmNGMwLWIwMzktNGEyZC1hYjEzLTBhNDNiMTgwNGRjYyJ9.p8M1d0YIrllrOMnceTYeWfmNe4-j77o_t7B9K2CcweA";
