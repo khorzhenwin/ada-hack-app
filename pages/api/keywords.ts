@@ -60,6 +60,6 @@ export default async function handler(req, res) {
       // parse as array before returning
       const removedBrackets = result[0].candidates[0].output;
       console.log(removedBrackets);
-      res.status(200).json({ keyword: removedBrackets });
+      res.status(200).json({ keywords: removedBrackets });
     });
 }
