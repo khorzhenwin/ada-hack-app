@@ -105,7 +105,7 @@ export default async function handler(req, res) {
     res.status(200).json({ message: "success" });
     // get keywords from /api/keywords
     const keywordsResponse = await callKeywordsAPI(text);
-    const keywords = keywordsResponse.keywords.split(",").trim();
+    const keywords = keywordsResponse.keywords.split(",");
 
     const recommendations = [];
     let counter = 0;

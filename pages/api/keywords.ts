@@ -23,11 +23,11 @@ export default async function handler(req, res) {
   
     From the input above, possible keyword to search and purchase is : desk organizer, desk lamp, bulletin board, study chair, etc.
     So provide back a pure sentence split with comma like:
-    Desk Organizer, Desk Lamp, Bulletin Board, Study Chair
+    Desk Organizer,Desk Lamp,Bulletin Board,Study Chair
   
     Another Example:
     User: I want to purchase something for my newly decorated kitchen.
-    output: Refrigerator, Oven, Plates, Dish Towel, Utensils
+    output: Refrigerator,Oven,Plates,Dish Towel,Utensils
   
     Provide whats commonly purchased based on your knowledge. Provide between 1 - 5 different type of items. If you can't understand, just return empty array.
 
