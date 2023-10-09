@@ -92,7 +92,7 @@ export default async function handler(req, res) {
 
   const words = text.split(" ");
   const hasRecommendation = words.some((word) => chatWithLLM.includes(word));
-
+  
   if (!hasRecommendation) {
     res.status(200).json({ message: "success" });
     // chat with LLM by calling /api/chat
@@ -113,7 +113,7 @@ export default async function handler(req, res) {
     // fetch recommendations from /api/recommendations
     for (const keyword of keywords) {
       // push 1 recommendation from each source for each keyword
-      const recommendationsResponse = await callRecommendationsAPI(keyword);
+      const recommendationsResponse = await callRecommendationsAPI(keyword.toLowerCase());
 
       recommendations.push(recommendationsResponse.lazada[0]);
       recommendations.push(recommendationsResponse.carousell[0]);
