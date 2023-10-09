@@ -144,7 +144,7 @@ export default async function handler(req, res) {
     for (const keyword of keywords) {
       // push 1 recommendation from each source for each keyword
       const recommendationsResponse = await callRecommendationsAPI(
-        keyword.toLowerCase()
+        keyword.toLowerCase().replace(/\s+/g, '-')
       );
 
       if (recommendationsResponse.lazada.length > 0) {
