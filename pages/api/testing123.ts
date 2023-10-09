@@ -13,9 +13,7 @@ export default async function handler(req, res) {
     return;
   }
   
-  const stringifiedText = JSON.stringify(text);
-  
-  await sendWAmessage(stringifiedText, phoneNumber.toString());
+  await sendWAmessage(text, phoneNumber.toString());
 
   console.log(req.body);
   return res.status(200).json({ message: "success" });
