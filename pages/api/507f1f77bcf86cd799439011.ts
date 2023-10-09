@@ -1,7 +1,7 @@
 const craftRecommendationsMessage = (recommendations) => {
   let message = "Here are some recommendations for you:\n\n";
   for (const recommendation of recommendations) {
-    message += `${recommendation.name}\n${recommendation.price}\n${recommendation.url}\n\n`;
+    message += `${recommendation.name}\nRM ${recommendation.price}\n${recommendation.url}\nSource: ${recommendation.source}\n\n`;
   }
   return message;
 };
@@ -115,10 +115,10 @@ export default async function handler(req, res) {
       // push 1 recommendation from each source for each keyword
       const recommendationsResponse = await callRecommendationsAPI(keyword.toLowerCase());
 
-      recommendations.push(recommendationsResponse.lazada[0]);
-      recommendations.push(recommendationsResponse.carousell[0]);
-      recommendations.push(recommendationsResponse.mudah[0]);
-      recommendations.push(recommendationsResponse.iprice[0]);
+      if(recommendationsResponse.lazada.length > 0)recommendations.push(recommendationsResponse.lazada[0]);
+      if(recommendationsResponse.carousell.length > 0)recommendations.push(recommendationsResponse.carousell[0]);
+      if(recommendationsResponse.mudah.length > 0)recommendations.push(recommendationsResponse.mudah[0]);
+      if(recommendationsResponse.iprice.length > 0)recommendations.push(recommendationsResponse.iprice[0]);
       counter++;
 
       // if counter is 3, break. Failsafe from spam calling
