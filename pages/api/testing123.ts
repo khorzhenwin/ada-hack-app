@@ -12,21 +12,28 @@ export default async function handler(req, res) {
     res.status(401).json({ message: "Unauthorized" });
     return;
   }
-  
-  await callSendRequst(text, phoneNumber.toString());
+
+  await sendWAmessage(text, phoneNumber.toString());
 
   return res.status(200).json({ message: "success" });
 }
 
-async function callSendRequst(text, phoneNumber) {
+async function sendWAmessage(text, phoneNumber) {
   const req = {};
+  req["platform"] = "WA";
+  req["type"] = "text";
+  req["from"] = "60136959014";
   req["to"] = phoneNumber;
-  req["text"] = text ? text : "Something wrong in receiving the message.";
+  req["text"] = text ? text : "Boey so handsome can i have one night with you?";
 
-  const endpoint = "https://ada-hack-app.vercel.app/api/whatsapp";
+  const waAPIKey =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRJZCI6IjY2ZDYzNDY0LTJhNjktNDg1MS05MjI1LTZjY2U3MDY2YTE2NiIsImNvdW50cnlDb2RlIjoiIiwiZW1haWwiOiJUZWFtMjBAYWRhLWFzaWEuY29tIiwiZXhwIjoyMzI3OTM1MTE5LCJpYXQiOjE2OTY3ODMxMTksIm5hbWUiOiJBRE1JTiIsInJvbGVDb2RlIjoiT1dORVIiLCJyb2xlSWQiOiJPV05FUiIsInNpZCI6ImFwaWtleSIsInN0eXBlIjoidXNlciIsInVpZCI6ImM4OWJmNGMwLWIwMzktNGEyZC1hYjEzLTBhNDNiMTgwNGRjYyJ9.p8M1d0YIrllrOMnceTYeWfmNe4-j77o_t7B9K2CcweA";
+
+  const endpoint = "https://bizmsgapi.ada-asia.com/prod/message";
 
   const header = {
     "Content-Type": "application/json", // Set Content-Type to application/json
+    Authorization: `Bearer ${waAPIKey}`,
   };
 
   const res = await fetch(endpoint, {
