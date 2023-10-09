@@ -1,4 +1,5 @@
 import { is } from "cheerio/lib/api/traversing";
+import CartItem from "../../interfaces/cartItem";
 
 const craftRecommendationsMessage = (recommendations) => {
   let message = "Here are some recommendations for you:\n\n";
@@ -71,8 +72,24 @@ const isAddToShoppingCart = (text: String) => {
     "basket",
   ];
   return text.split(" ").some((word) => {
-    sampleWordsForCart.includes(word.toLowerCase());
+    sampleWordsForCart.includes(
+      word.toLowerCase().replace(",", "").replace(".", "")
+    );
   });
+};
+
+const callPostCartItemsAPI = async (item: CartItem) => {
+  const postCartItemsEndpoint = `https://ada-hack-app.vercel.app/api/cart/items`;
+  const postCartItemsResponse = await fetch(postCartItemsEndpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ item: item, chatId: "" }),
+  });
+  return Promise.resolve(postCartItemsResponse.json());
+};
+
+const isCheckout = (text: String) => {
+  let sampleWordsForCheckout = ["checkout"];
 };
 
 // POST Method
@@ -154,6 +171,8 @@ export default async function handler(req, res) {
     await callWhatsAppAPI(to, craftRecommendationsMessage(recommendations));
     return;
   } else if (isAddToShoppingCart(text)) {
+    res.status(200).json({ message: "success" });
+    // await callPostCartItemsAPI(item);
   } else {
     res.status(200).json({ message: "success" });
     // chat with LLM by calling /api/chat
