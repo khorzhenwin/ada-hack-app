@@ -94,14 +94,15 @@ export default async function handler(req, res) {
   const hasRecommendation = words.some((word) => chatWithLLM.includes(word));
 
   if (!hasRecommendation) {
+    res.status(200).json({ message: "success" });
     // chat with LLM by calling /api/chat
     const chatResponse = await callChatAPI(text, to);
 
     // call /api/whatsapp to send message to user
     await callWhatsAppAPI(to, chatResponse.response);
-
-    return res.status(200).json({ message: "success" });
+    return;
   } else {
+    res.status(200).json({ message: "success" });
     // get keywords from /api/keywords
     const keywordsResponse = await callKeywordsAPI(text);
     const keywords = keywordsResponse.keywords.split(",");
