@@ -92,7 +92,7 @@ export default async function handler(req, res) {
 
   const words = text.split(" ");
   const hasRecommendation = words.some((word) => chatWithLLM.includes(word));
-  
+
   if (!hasRecommendation) {
     res.status(200).json({ message: "success" });
     // chat with LLM by calling /api/chat
@@ -113,12 +113,26 @@ export default async function handler(req, res) {
     // fetch recommendations from /api/recommendations
     for (const keyword of keywords) {
       // push 1 recommendation from each source for each keyword
-      const recommendationsResponse = await callRecommendationsAPI(keyword.toLowerCase());
+      const recommendationsResponse = await callRecommendationsAPI(
+        keyword.toLowerCase()
+      );
 
-      if(recommendationsResponse.lazada.length > 0)recommendations.push(recommendationsResponse.lazada[0]);
-      if(recommendationsResponse.carousell.length > 0)recommendations.push(recommendationsResponse.carousell[0]);
-      if(recommendationsResponse.mudah.length > 0)recommendations.push(recommendationsResponse.mudah[0]);
-      if(recommendationsResponse.iprice.length > 0)recommendations.push(recommendationsResponse.iprice[0]);
+      if (recommendationsResponse.lazada.length > 0) {
+        recommendationsResponse.lazada[0].source = "Lazada";
+        recommendations.push(recommendationsResponse.lazada[0]);
+      }
+      if (recommendationsResponse.carousell.length > 0) {
+        recommendationsResponse.carousell[0].source = "Carousell";
+        recommendations.push(recommendationsResponse.carousell[0]);
+      }
+      if (recommendationsResponse.mudah.length > 0) {
+        recommendationsResponse.mudah[0].source = "Mudah.my";
+        recommendations.push(recommendationsResponse.mudah[0]);
+      }
+      if (recommendationsResponse.iprice.length > 0) {
+        recommendationsResponse.iprice[0].source = "iPrice";
+        recommendations.push(recommendationsResponse.iprice[0]);
+      }
       counter++;
 
       // if counter is 3, break. Failsafe from spam calling
