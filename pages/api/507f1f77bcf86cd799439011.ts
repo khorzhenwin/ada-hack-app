@@ -62,7 +62,9 @@ export default async function handler(req, res) {
     res.status(405).json({ message: "Method not supported" });
     return;
   }
-  const { text, to } = req.body;
+
+  const text = req.body.text.toString();
+  const to = req.body.to.toString();
 
   // Check bearer token
   const bearerToken = req.headers.Authorization
