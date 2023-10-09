@@ -1,3 +1,5 @@
+import { is } from "cheerio/lib/api/traversing";
+
 const craftRecommendationsMessage = (recommendations) => {
   let message = "Here are some recommendations for you:\n\n";
   for (const recommendation of recommendations) {
@@ -56,6 +58,23 @@ const callRecommendationsAPI = async (keyword) => {
   return Promise.resolve(recommendationsResponse.json());
 };
 
+const isAddToShoppingCart = (text: String) => {
+  let sampleWordsForCart = [
+    "cart",
+    "buy",
+    "buying",
+    "order",
+    "ordering",
+    "shopping list",
+    "purchase",
+    "purchasing",
+    "basket",
+  ];
+  return text.split(" ").some((word) => {
+    sampleWordsForCart.includes(word.toLowerCase());
+  });
+};
+
 // POST Method
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -95,15 +114,7 @@ export default async function handler(req, res) {
   const words = text.split(" ");
   const hasRecommendation = words.some((word) => chatWithLLM.includes(word));
 
-  if (!hasRecommendation) {
-    res.status(200).json({ message: "success" });
-    // chat with LLM by calling /api/chat
-    const chatResponse = await callChatAPI(text, to);
-
-    // call /api/whatsapp to send message to user
-    await callWhatsAppAPI(to, chatResponse.response);
-    return;
-  } else {
+  if (hasRecommendation) {
     res.status(200).json({ message: "success" });
     // get keywords from /api/keywords
     const keywordsResponse = await callKeywordsAPI(text);
@@ -143,6 +154,15 @@ export default async function handler(req, res) {
 
     // call /api/whatsapp to send message to user
     await callWhatsAppAPI(to, craftRecommendationsMessage(recommendations));
+    return;
+  } else if (isAddToShoppingCart(text)) {
+  } else {
+    res.status(200).json({ message: "success" });
+    // chat with LLM by calling /api/chat
+    const chatResponse = await callChatAPI(text, to);
+
+    // call /api/whatsapp to send message to user
+    await callWhatsAppAPI(to, chatResponse.response);
     return;
   }
 }
