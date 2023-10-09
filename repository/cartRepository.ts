@@ -114,7 +114,9 @@ export default class CartRepository {
     const docRef = await CartRepository.findByUserId(userId);
     const newCartItems = docRef!
       .data()
-      .cartItems.filter((item) => !item.name.includes(itemName));
+      .cartItems.filter(
+        (item) => !item.name.toLowerCase().includes(itemName.toLowerCase())
+      );
     await CartRepository.update(docRef!.ref, {
       cartItems: newCartItems,
     });
@@ -127,7 +129,9 @@ export default class CartRepository {
     const docRef = await CartRepository.findByChatId(chatId);
     const newCartItems = docRef!
       .data()
-      .cartItems.filter((item) => !item.name.includes(itemName));
+      .cartItems.filter(
+        (item) => !item.name.toLowerCase().includes(itemName.toLowerCase())
+      );
     await CartRepository.update(docRef!.ref, {
       cartItems: newCartItems,
     });
