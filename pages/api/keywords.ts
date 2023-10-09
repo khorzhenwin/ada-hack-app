@@ -22,7 +22,7 @@ export default async function handler(req, res) {
     User: I feel decorating for my desk in my bed room for better study vibes or environment.
   
     From the input above, possible keyword to search and purchase is : desk organizer, desk lamp, bulletin board, study chair, etc.
-    So provide back a keyword in a sentence split with comma like:
+    So provide back a pure sentence split with comma like:
     Desk Organizer, Desk Lamp, Bulletin Board, Study Chair
   
     Another Example:
@@ -60,6 +60,6 @@ export default async function handler(req, res) {
       // parse as array before returning
       const removedBrackets = result[0].candidates[0].output;
       console.log(removedBrackets);
-      res.status(200).json({ keywords: removedBrackets });
+      res.status(200).json(removedBrackets);
     });
 }
