@@ -136,15 +136,14 @@ export default async function handler(req, res) {
 
 const callWhatsAppAPI = async (to, response) => {
   const message = {
-    to: to.toString(),
-    text: response.toString(),
+    to: to,
+    text: response,
   };
 
   const whatsappEndpoint = "https://ada-hack-app.vercel.app/api/whatsapp";
-  const res = await fetch(whatsappEndpoint, {
+  await fetch(whatsappEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(message),
   });
-  return Promise.resolve(res.json());
 };
