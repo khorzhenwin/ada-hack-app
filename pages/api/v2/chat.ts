@@ -140,7 +140,7 @@ const callWhatsAppAPI = async (to, response) => {
     text: response.toString(),
   };
 
-  const whatsappEndpoint = "http://localhost:3000/api/whatsapp";
+  const whatsappEndpoint = "http://ada-hack-app.vercel.app/api/whatsapp";
   const res = await fetch(whatsappEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

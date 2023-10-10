@@ -48,13 +48,13 @@ export default class RecommendationsRepository {
     return await addDoc(RecommendationsRepository.ref, values);
   };
 
-  static addItemsByUserId = async (userId: string, items: any) => {
-    const docref = await RecommendationsRepository.findByUserId(userId);
-    await RecommendationsRepository.update(docref!.ref, {
-      iprice: items["iPrice"] ? items["iPrice"] : [],
-      lazada: items["Lazada"] ? items["Lazada"] : [],
-      mudah: items["Mudah.my"] ? items["Mudah.my"] : [],
-      carousell: items["Carousell"] ? items["Carousell"] : [],
+  static addRecommendationsByUserId = async (userId: string, items: any) => {
+    const docRef = await RecommendationsRepository.findByUserId(userId);
+    await RecommendationsRepository.update(docRef!.ref, {
+      iprice: [...docRef!.data().iprice, items.iprice],
+      // lazada: [...docRef!.data().lazada, items.lazada],
+      mudah: [...docRef!.data().mudah, items.mudah],
+      carousell: [...docRef!.data().carousell, items.carousell],
     });
   };
 
