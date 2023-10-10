@@ -83,17 +83,16 @@ export default async function handler(req, res) {
 
 const callWhatsAppAPI = async (to, response) => {
   const message = {
-    to: to.toString(),
-    text: response.toString(),
+    to: to,
+    text: response,
   };
 
   const whatsappEndpoint = "http://localhost:3000/api/whatsapp";
-  const res = await fetch(whatsappEndpoint, {
+  await fetch(whatsappEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(message),
   });
-  return Promise.resolve(res.json());
 };
 
 const craftRecommendationsMessage = (recommendations: Array<any>) => {
