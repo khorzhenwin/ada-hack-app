@@ -33,29 +33,37 @@ const craftCartMessage = (cartItems: CartItem[]) => {
   var message = "This is the overall view of your cart:\n\n";
   var source = cartItems[0].source;
   var count = 1;
-  var subtotal = 0;
-  var total = 0;
+  var subtotal = 0.0;
+  var total = 0.0;
 
-  message += `===== *Platform: ${source}* =====`;
+  message += `===== *Platform: ${source}* =====\n`;
 
   cartItems.forEach((item, i) => {
-    message += `${count}. *${item.name}*\nPrice: RM ${item.price}\nQuantity: ${item.quantity}\n\n`;
+    message += `${count}. *${item.name}*\n\`\`\`  Price    : RM ${item.price}\`\`\`\n\`\`\`  Quantity : ${item.quantity}\`\`\`\n\n`;
 
     subtotal += parseFloat(item.price) * parseInt(item.quantity);
 
-    if (source !== cartItems[i + 1].source) {
+    if (cartItems[i + 1] && source !== cartItems[i + 1].source) {
+      message += `---> *Subtotal: RM ${subtotal.toFixed(
+        2
+      )}*\n\n\n===== *Platform: ${cartItems[i + 1].source}* =====\n`;
+      source = cartItems[i + 1].source;
       total += subtotal;
       subtotal = 0;
-      message += `*===> Subtotal: RM ${subtotal}*\n\n===== Platform: ${
-        cartItems[i + 1].source
-      } =====`;
-      source = cartItems[i + 1].source;
+      count = 0;
     }
+    count++;
   });
 
   total += subtotal;
 
-  message += `*===> Subtotal: RM ${subtotal}*\n\n========\n*Total: RM ${total}*\n========`;
+  message += `---> *Subtotal: RM ${subtotal.toFixed(
+    2
+  )}*\n\n\n============\n*Total: RM ${total.toFixed(
+    2
+  )}*\n============\n\n\n\nYou can proceed to checkout after confirming your selections.`;
+
+  return message;
 };
 
 const callWhatsAppAPI = async (to, response) => {
@@ -64,7 +72,7 @@ const callWhatsAppAPI = async (to, response) => {
     text: response.toString(),
   };
 
-  const whatsappEndpoint = "https://ada-hack-app.vercel.app/api/whatsapp";
+  const whatsappEndpoint = "http://localhost:3000/api/whatsapp";
   const res = await fetch(whatsappEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -79,7 +87,7 @@ const callChatAPI = async (text, to) => {
     userId: to,
   };
 
-  const chatEndpoint = "https://ada-hack-app.vercel.app/api/v2/chat";
+  const chatEndpoint = "http://localhost:3000/api/v2/chat";
   const chatResponse = await fetch(chatEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -90,7 +98,7 @@ const callChatAPI = async (text, to) => {
 };
 
 const callKeywordsAPI = async (text) => {
-  const keywordsEndpoint = "https://ada-hack-app.vercel.app/api/keywords";
+  const keywordsEndpoint = "http://localhost:3000/api/keywords";
   const keywordsResponse = await fetch(keywordsEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -105,7 +113,7 @@ const callRecommendationsAPI = async (keywords, to) => {
     to: to,
   };
 
-  const recommendationsEndpoint = `https://ada-hack-app.vercel.app/api/v2/recommendations`;
+  const recommendationsEndpoint = `http://localhost:3000/api/v2/recommendations`;
   await fetch(recommendationsEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -130,7 +138,7 @@ const chatWithLLM = [
 ];
 
 const isAddToShoppingCart = (text: string) => {
-  let sampleWordsForCart = [
+  let sampleWordsForAddToCart = [
     "cart",
     "buy",
     "buying",
@@ -141,8 +149,20 @@ const isAddToShoppingCart = (text: string) => {
     "purchasing",
     "basket",
   ];
+
+  let sampleWordsNotForAddToCart = ["view", "see", "look", "checkout"];
+
+  if (
+    text.split(" ").some((word) => {
+      return sampleWordsNotForAddToCart.includes(
+        word.toLowerCase().replace(",", "").replace(".", "")
+      );
+    })
+  )
+    return false;
+
   return text.split(" ").some((word) => {
-    return sampleWordsForCart.includes(
+    return sampleWordsForAddToCart.includes(
       word.toLowerCase().replace(",", "").replace(".", "")
     );
   });
@@ -166,7 +186,7 @@ const addChoicesToCart = async (text: string, userId: string) => {
   const sortedChoices = productChoices.sort(
     (a, b) => parseInt(a[0]) - parseInt(b[0])
   );
-  return { text: "test" };
+
   const recommendedProducts = await RecommendationsRepository.findByUserId(
     userId
   );
@@ -175,32 +195,31 @@ const addChoicesToCart = async (text: string, userId: string) => {
     recommendedProducts.data() !== (null || undefined) &&
     recommendedProducts.exists()
   ) {
-    // const sortedRecommendedProducts = [
-    //   ...recommendedProducts.data().lazada,
-    //   ...recommendedProducts.data().carousell,
-    //   ...recommendedProducts.data().mudah,
-    //   ...recommendedProducts.data().iprice,
-    // ];
+    const sortedRecommendedProducts = [
+      // ...recommendedProducts.data().lazada,
+      ...recommendedProducts.data().carousell,
+      ...recommendedProducts.data().mudah,
+      ...recommendedProducts.data().iprice,
+    ];
 
-    // var cart = [];
-    // sortedChoices.forEach((choice) => {
-    //   let product = sortedRecommendedProducts[parseInt(choice[0]) - 1];
-    //   product["quantity"] = choice[1] ? choice[1] : "1";
+    var cart = [];
+    sortedChoices.forEach((choice) => {
+      let product = sortedRecommendedProducts[parseInt(choice[0]) - 1];
+      product["quantity"] = choice[1] ? choice[1] : "1";
 
-    //   cart.push(product);
-    // });
+      cart.push(product);
+    });
 
-    // await callPostCartItemsAPI(cart, userId);
+    await callPostCartItemsAPI(cart, userId);
 
-    // return "Items selected have been added to your cart!";
-    return recommendedProducts.data();
+    return "The items you selected have been added to your cart!\n\nYou can view your cart to confirm your selections.";
   }
 
-  return { text: "Your recommendation products are corrupted!" };
+  return "Your recommendation products are corrupted!";
 };
 
 const callPostCartItemsAPI = async (item: CartItem[], userId: string) => {
-  const postCartItemsEndpoint = `https://ada-hack-app.vercel.app/api/cart/items`;
+  const postCartItemsEndpoint = `http://localhost:3000/api/cart/items`;
   const postCartItemsResponse = await fetch(postCartItemsEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -231,12 +250,13 @@ const isViewShoppingCart = (text: string) => {
 };
 
 const callGetCartItemsAPI = async (userId: string) => {
-  const getCartItemsEndpoint = `https://ada-hack-app.vercel.app/api/cart/items?userId=${userId}`;
+  const getCartItemsEndpoint = `http://localhost:3000/api/cart/items?userId=${userId}`;
   const getCartItemsResponse = await fetch(getCartItemsEndpoint, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
-  return Promise.resolve(getCartItemsResponse.json());
+
+  return await getCartItemsResponse.json();
 };
 
 // Keyword detection for checkout (can check)
@@ -279,17 +299,15 @@ export default async function handler(req, res) {
 
     return;
   } else if (isAddToShoppingCart(text)) {
-    res.status(200).json({ message: `success at add to cart: ${to}` });
-    // const result = await addChoicesToCart(text, to);
+    res.status(200).json({ message: `success at add to cart` });
+    const result = await addChoicesToCart(text, to);
 
     // call /api/whatsapp to send message to user
-    // await callWhatsAppAPI(to, JSON.stringify(result));
-    await callWhatsAppAPI(to, "Send something");
+    await callWhatsAppAPI(to, result);
     return;
   } else if (isViewShoppingCart(text)) {
     res.status(200).json({ message: "success at view cart" });
-    const cart = await callGetCartItemsAPI(to);
-    const cartItems = cart.cartItems;
+    const cartItems = await callGetCartItemsAPI(to);
 
     // call /api/whatsapp to send message to user
     await callWhatsAppAPI(to, craftCartMessage(cartItems));

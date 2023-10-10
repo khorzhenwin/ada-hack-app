@@ -54,10 +54,10 @@ export default class RecommendationsRepository {
   ) => {
     const docRef = await RecommendationsRepository.findByUserId(userId);
     await RecommendationsRepository.update(docRef.ref, {
-      iprice: items.iprice,
+      iprice: items.iprice ? items.iprice : [],
       // lazada: items.lazada,
-      mudah: items.mudah,
-      carousell: items.carousell,
+      mudah: items.mudah ? items.mudah : [],
+      carousell: items.carousell ? items.carousell : [],
     });
   };
 

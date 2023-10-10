@@ -87,7 +87,7 @@ const callWhatsAppAPI = async (to, response) => {
     text: response.toString(),
   };
 
-  const whatsappEndpoint = "https://ada-hack-app.vercel.app/api/whatsapp";
+  const whatsappEndpoint = "http://localhost:3000/api/whatsapp";
   const res = await fetch(whatsappEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -114,7 +114,11 @@ const craftRecommendationsMessage = (recommendations: Array<any>) => {
         recommendation.price
       }\n${recommendation.url}\n\n`;
     });
+    message += "\n\n";
   });
+
+  message +=
+    'Start filling up your virtual cart by saying something like:\n```   "I want to buy 1-2, 5-3, 6-2"```\n* Format = (Product Number)-(Quantity)';
 
   return message;
 };
