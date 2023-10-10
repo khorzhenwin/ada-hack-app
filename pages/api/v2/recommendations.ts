@@ -2,10 +2,7 @@ import {
   getCarousellProducts,
   getIpriceProducts,
   getMudahMyProducts,
-  getLazadaProducts,
 } from "../../../data/scraping";
-import { getLazadaProductsFromAPI } from "../../../data/api";
-import { v4 as uuidv4 } from "uuid";
 import RecommendationsRepository from "../../../repository/recommendationsRepository";
 
 // POST Method
@@ -32,9 +29,18 @@ export default async function handler(req, res) {
   // fetch recommendations from /api/recommendations
   for (const keyword of keywords) {
     // push 1 recommendation from each source for each keyword
-    const carousell = await getCarousellProducts(keyword, pageNo);
-    const iprice = await getIpriceProducts(keyword, pageNo);
-    const mudah = await getMudahMyProducts(keyword, pageNo);
+    const carousell = await getCarousellProducts(
+      keyword.toLowerCase().trim(),
+      pageNo
+    );
+    const iprice = await getIpriceProducts(
+      keyword.toLowerCase().trim(),
+      pageNo
+    );
+    const mudah = await getMudahMyProducts(
+      keyword.toLowerCase().trim(),
+      pageNo
+    );
 
     if (carousell.length > 0) {
       carousell[0]["source"] = "Carousell";
