@@ -285,6 +285,13 @@ export default async function handler(req, res) {
     await callRecommendationsAPI(keywordsResponse.keywords, to);
 
     return;
+  } else if (isAddToShoppingCart(text)) {
+    res.status(200).json({ message: "success at add to cart" });
+    const result = await addChoicesToCart(text, to);
+
+    // call /api/whatsapp to send message to user
+    await callWhatsAppAPI(to, JSON.stringify(result));
+    return;
   } else if (isViewShoppingCart(text)) {
     res.status(200).json({ message: "success at view cart" });
     const cart = await callGetCartItemsAPI(to);
