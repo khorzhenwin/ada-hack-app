@@ -8,6 +8,7 @@ class _CartItem {
   seller_location: string = "";
   url: string = "";
   source: string = "";
+  quantity: string = "";
 }
 
 export default interface CartItem extends _CartItem {}

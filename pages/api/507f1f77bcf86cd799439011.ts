@@ -104,14 +104,55 @@ const isAddToShoppingCart = (text: string) => {
   });
 };
 
-const getRecommendationFromDB = (text: string, userId: string) => {};
+const addChoicesToCart = async (text: string, userId: string) => {
+  // assume the user says "I want to buy number 1-2,2-5,5,6" like that
+  // format: (product_number)-(quantity)
 
-const callPostCartItemsAPI = async (item: CartItem) => {
+  var productChoices = [];
+
+  const words = text.split(/[ ,]/).filter((word) => word != "");
+
+  words.forEach((word) => {
+    if (!isNaN(Number(word.split("-")[0]))) {
+      let choice = word.split("-");
+      productChoices.push(choice);
+    }
+  });
+
+  const sortedChoices = productChoices.sort(
+    (a, b) => parseInt(a[0]) - parseInt(b[0])
+  );
+
+  const recommendedProducts = (
+    await RecommendationsRepository.findByUserId(userId)
+  ).data();
+
+  const sortedRecommendedProducts = [
+    ...recommendedProducts.lazada,
+    ...recommendedProducts.carousell,
+    ...recommendedProducts.mudah,
+    ...recommendedProducts.iprice,
+  ];
+
+  var cart: CartItem[] = [];
+  sortedChoices.forEach((choice) => {
+    let product = sortedRecommendedProducts[parseInt(choice[0]) - 1];
+    product["quantity"] = choice[1];
+
+    cart.push(product as any);
+  });
+
+  await callPostCartItemsAPI(cart, userId);
+
+  return "Items selected have been added to your cart!";
+};
+
+const callPostCartItemsAPI = async (item: CartItem[], userId: string) => {
   const postCartItemsEndpoint = `https://ada-hack-app.vercel.app/api/cart/items`;
   const postCartItemsResponse = await fetch(postCartItemsEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ item: item, chatId: "" }),
+    body: JSON.stringify({ item: item, userId: userId }),
   });
   return Promise.resolve(postCartItemsResponse.json());
 };
@@ -229,14 +270,16 @@ export default async function handler(req, res) {
     });
 
     // testing implementing adding recommendations to db so it can be accessed when adding to cart
-    // RecommendationsRepository.addItemsByUserId(to, groupedBySource);
+    RecommendationsRepository.addItemsByUserId(to, groupedBySource);
 
     // call /api/whatsapp to send message to user
     await callWhatsAppAPI(to, craftRecommendationsMessage(recommendations));
     return;
   } else if (isAddToShoppingCart(text)) {
     res.status(200).json({ message: "success" });
-    // await callPostCartItemsAPI(item);
+    const result = await addChoicesToCart(text, to);
+
+    await callWhatsAppAPI(to, result);
   } else {
     res.status(200).json({ message: "success" });
     // chat with LLM by calling /api/chat
