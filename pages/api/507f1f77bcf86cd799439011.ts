@@ -268,7 +268,7 @@ export default async function handler(req, res) {
   const hasRecommendation = words.some((word) => chatWithLLM.includes(word));
 
   if (hasRecommendation) {
-    res.status(200).json({ message: "success" });
+    res.status(200).json({ message: "success at recommendation" });
     // get keywords from /api/keywords
     const keywordsResponse = await callKeywordsAPI(text);
     const keywords = keywordsResponse.keywords.split(",");
