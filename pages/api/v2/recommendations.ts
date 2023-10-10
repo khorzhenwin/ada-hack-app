@@ -4,6 +4,7 @@ import {
   getMudahMyProducts,
 } from "../../../data/scraping";
 import RecommendationsRepository from "../../../repository/recommendationsRepository";
+import querystring from "querystring";
 
 // POST Method
 export default async function handler(req, res) {
@@ -18,7 +19,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  const to = req.body.to.toString();
+  const to = req.body.to;
   res.status(200).json({ message: "success" });
 
   const keywords = req.body.keywords.split(",");
@@ -76,7 +77,7 @@ export default async function handler(req, res) {
     groupedBySource[source].push(recommendation);
   });
 
-  RecommendationsRepository.addItemsByUserId(to, groupedBySource);
+  await RecommendationsRepository.addItemsByUserId(to, groupedBySource);
   await callWhatsAppAPI(to, craftRecommendationsMessage(recommendations));
 }
 
@@ -90,7 +91,7 @@ const callWhatsAppAPI = async (to, response) => {
   const res = await fetch(whatsappEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(message),
+    body: querystring.stringify(message),
   });
   return Promise.resolve(res.json());
 };

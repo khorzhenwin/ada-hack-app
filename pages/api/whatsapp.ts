@@ -1,3 +1,5 @@
+import querystring from "querystring";
+
 // this is a POST method
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -30,7 +32,7 @@ const sendWhatsappMessage = async (req) => {
   const res = await fetch(endpoint, {
     method: "POST",
     headers: header,
-    body: JSON.stringify(req.body),
+    body: querystring.stringify(req.body),
   });
 
   if (res.status === 200 || res.status === 201) {

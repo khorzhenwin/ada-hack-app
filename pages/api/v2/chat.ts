@@ -6,6 +6,7 @@ import Cart from "../../../interfaces/cart";
 import CartRepository from "../../../repository/cartRepository";
 import Recommendations from "../../../interfaces/recommendations";
 import RecommendationsRepository from "../../../repository/recommendationsRepository";
+import querystring from "querystring";
 
 const { DiscussServiceClient } = require("@google-ai/generativelanguage");
 const { GoogleAuth } = require("google-auth-library");
@@ -144,7 +145,7 @@ const callWhatsAppAPI = async (to, response) => {
   const res = await fetch(whatsappEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(message),
+    body: querystring.stringify(message),
   });
   return Promise.resolve(res.json());
 };
