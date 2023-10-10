@@ -65,7 +65,7 @@ const callWhatsAppAPI = async (to, response) => {
     text: response,
   };
 
-  const whatsappEndpoint = "https://ada-hack-app.vercel.app/api/whatsapp";
+  const whatsappEndpoint = "https://b1a0-192-228-206-41.ngrok-free.app/api/whatsapp";
   const res = await fetch(whatsappEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -80,7 +80,7 @@ const callChatAPI = async (text, to) => {
     userId: to,
   };
 
-  const chatEndpoint = "https://ada-hack-app.vercel.app/api/chat";
+  const chatEndpoint = "https://b1a0-192-228-206-41.ngrok-free.app/api/chat";
   const chatResponse = await fetch(chatEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -91,7 +91,7 @@ const callChatAPI = async (text, to) => {
 };
 
 const callKeywordsAPI = async (text) => {
-  const keywordsEndpoint = "https://ada-hack-app.vercel.app/api/keywords";
+  const keywordsEndpoint = "https://b1a0-192-228-206-41.ngrok-free.app/api/keywords";
   const keywordsResponse = await fetch(keywordsEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -101,7 +101,7 @@ const callKeywordsAPI = async (text) => {
 };
 
 const callRecommendationsAPI = async (keyword) => {
-  const recommendationsEndpoint = `https://ada-hack-app.vercel.app/api/recommendations?category=${keyword}`;
+  const recommendationsEndpoint = `https://b1a0-192-228-206-41.ngrok-free.app/api/recommendations?category=${keyword}`;
   const recommendationsResponse = await fetch(recommendationsEndpoint, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
@@ -113,22 +113,6 @@ const callRecommendationsAPI = async (keyword) => {
     return null;
   }
 };
-
-const chatWithLLM = [
-  "recommend",
-  "recommendations",
-  "recommendation",
-  "suggestion",
-  "suggestions",
-  "suggestion",
-  "suggest",
-  "suggests",
-  "suggested",
-  "e-commerce",
-  "ecommerce",
-  "platforms",
-  "Malaysia",
-];
 
 const isAddToShoppingCart = (text: string) => {
   let sampleWordsForCart = [
@@ -193,7 +177,7 @@ const addChoicesToCart = async (text: string, userId: string) => {
 };
 
 const callPostCartItemsAPI = async (item: CartItem[], userId: string) => {
-  const postCartItemsEndpoint = `https://ada-hack-app.vercel.app/api/cart/items`;
+  const postCartItemsEndpoint = `https://b1a0-192-228-206-41.ngrok-free.app/api/cart/items`;
   const postCartItemsResponse = await fetch(postCartItemsEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -226,7 +210,7 @@ const isViewShoppingCart = (text: string) => {
 };
 
 const callGetCartItemsAPI = async (userId: string) => {
-  const getCartItemsEndpoint = `https://ada-hack-app.vercel.app/api/cart/items?userId=${userId}`;
+  const getCartItemsEndpoint = `https://b1a0-192-228-206-41.ngrok-free.app/api/cart/items?userId=${userId}`;
   const getCartItemsResponse = await fetch(getCartItemsEndpoint, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
@@ -263,11 +247,28 @@ export default async function handler(req, res) {
     return;
   }
 
+  // check if text contains "recommend", "recommendations", "recommendation" or "suggestion" or "suggestions" or "suggestion" or "suggest" or "suggests" or "suggested"
+  const chatWithLLM = [
+    "recommend",
+    "recommendations",
+    "recommendation",
+    "suggestion",
+    "suggestions",
+    "suggestion",
+    "suggest",
+    "suggests",
+    "suggested",
+    "e-commerce",
+    "ecommerce",
+    "platforms",
+    "Malaysia",
+  ];
+
   const words = text.split(" ");
   const hasRecommendation = words.some((word) => chatWithLLM.includes(word));
 
   if (hasRecommendation) {
-    res.status(200).json({ message: "success at recommendation" });
+    res.status(200).json({ message: "success" });
     // get keywords from /api/keywords
     const keywordsResponse = await callKeywordsAPI(text);
     const keywords = keywordsResponse.keywords.split(",");
@@ -286,10 +287,7 @@ export default async function handler(req, res) {
       //   recommendationsResponse.lazada[0].source = "Lazada";
       //   recommendations.push(recommendationsResponse.lazada[0]);
       // }
-      if (
-        recommendationsResponse.carousell &&
-        recommendationsResponse.carousell.length > 0
-      ) {
+      if (recommendationsResponse.carousell && recommendationsResponse.carousell.length > 0) {
         recommendationsResponse.carousell[0].source = "Carousell";
         recommendations.push(recommendationsResponse.carousell[0]);
       }
@@ -345,7 +343,7 @@ export default async function handler(req, res) {
     );
     return;
   } else {
-    res.status(200).json({ message: "success at error" });
+    res.status(200).json({ message: "success" });
     // chat with LLM by calling /api/chat
     const chatResponse = await callChatAPI(text, to);
 
