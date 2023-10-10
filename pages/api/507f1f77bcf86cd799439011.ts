@@ -219,7 +219,7 @@ const callGetCartItemsAPI = async (userId: string) => {
 };
 
 // Keyword detection for checkout (can check)
-const isCheckout = (text) => {
+const isCheckout = (text: string) => {
   let sampleWordsForCheckout = ["checkout"];
   return text.split(" ").some((word) => {
     return sampleWordsForCheckout.includes(
@@ -320,18 +320,27 @@ export default async function handler(req, res) {
     await callWhatsAppAPI(to, craftRecommendationsMessage(recommendations));
     return;
   } else if (isAddToShoppingCart(text)) {
-    res.status(200).json({ message: "success" });
+    res.status(200).json({ message: "success at add to cart" });
     const result = await addChoicesToCart(text, to);
 
     // call /api/whatsapp to send message to user
     await callWhatsAppAPI(to, result);
     return;
   } else if (isViewShoppingCart(text)) {
+    res.status(200).json({ message: "success at view cart" });
     const cart = await callGetCartItemsAPI(to);
     const cartItems = cart.cartItems;
 
     // call /api/whatsapp to send message to user
     await callWhatsAppAPI(to, craftCartMessage(cartItems));
+    return;
+  } else if (isCheckout(text)) {
+    res.status(200).json({ message: "success at checkout" });
+
+    await callWhatsAppAPI(
+      to,
+      "Proceeding to checkout now.\n[insert link to checkout screenshot here]"
+    );
     return;
   } else {
     res.status(200).json({ message: "success" });
