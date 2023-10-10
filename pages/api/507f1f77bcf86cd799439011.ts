@@ -167,29 +167,37 @@ const addChoicesToCart = async (text: string, userId: string) => {
   const sortedChoices = productChoices.sort(
     (a, b) => parseInt(a[0]) - parseInt(b[0])
   );
+  return { text: "test" };
+  const recommendedProducts = await RecommendationsRepository.findByUserId(
+    userId
+  );
 
-  const recommendedProducts = (
-    await RecommendationsRepository.findByUserId(userId)
-  ).data();
+  if (
+    recommendedProducts.data() !== (null || undefined) &&
+    recommendedProducts.exists()
+  ) {
+    // const sortedRecommendedProducts = [
+    //   ...recommendedProducts.data().lazada,
+    //   ...recommendedProducts.data().carousell,
+    //   ...recommendedProducts.data().mudah,
+    //   ...recommendedProducts.data().iprice,
+    // ];
 
-  const sortedRecommendedProducts = [
-    ...recommendedProducts.lazada,
-    ...recommendedProducts.carousell,
-    ...recommendedProducts.mudah,
-    ...recommendedProducts.iprice,
-  ];
+    // var cart = [];
+    // sortedChoices.forEach((choice) => {
+    //   let product = sortedRecommendedProducts[parseInt(choice[0]) - 1];
+    //   product["quantity"] = choice[1] ? choice[1] : "1";
 
-  var cart: CartItem[] = [];
-  sortedChoices.forEach((choice) => {
-    let product = sortedRecommendedProducts[parseInt(choice[0]) - 1];
-    product["quantity"] = choice[1] ? choice[1] : "1";
+    //   cart.push(product);
+    // });
 
-    cart.push(product as any);
-  });
+    // await callPostCartItemsAPI(cart, userId);
 
-  await callPostCartItemsAPI(cart, userId);
+    // return "Items selected have been added to your cart!";
+    return recommendedProducts.data();
+  }
 
-  return "Items selected have been added to your cart!";
+  return { text: "Your recommendation products are corrupted!" };
 };
 
 const callPostCartItemsAPI = async (item: CartItem[], userId: string) => {
@@ -270,6 +278,13 @@ export default async function handler(req, res) {
     const keywordsResponse = await callKeywordsAPI(text);
     await callRecommendationsAPI(keywordsResponse.keywords, to);
 
+    return;
+  } else if (isAddToShoppingCart(text)) {
+    res.status(200).json({ message: "success at add to cart" });
+    const result = await addChoicesToCart(text, to);
+
+    // call /api/whatsapp to send message to user
+    await callWhatsAppAPI(to, JSON.stringify(result));
     return;
   } else if (isViewShoppingCart(text)) {
     res.status(200).json({ message: "success at view cart" });
