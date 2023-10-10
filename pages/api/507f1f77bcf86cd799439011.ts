@@ -60,8 +60,8 @@ const craftCartMessage = (cartItems: CartItem[]) => {
 
 const callWhatsAppAPI = async (to, response) => {
   const message = {
-    to: to,
-    text: response,
+    to: to.toString(),
+    text: response.toString(),
   };
 
   const whatsappEndpoint = "https://ada-hack-app.vercel.app/api/whatsapp";
@@ -106,9 +106,10 @@ const callRecommendationsAPI = async (keyword) => {
     headers: { "Content-Type": "application/json" },
   });
 
-  if (recommendationsResponse) {
-    return Promise.resolve(recommendationsResponse.json());
-  } else {
+  try {
+    const resp = recommendationsResponse.json();
+    return Promise.resolve(resp);
+  } catch {
     return null;
   }
 };
@@ -302,6 +303,14 @@ export default async function handler(req, res) {
 
       // if counter is 3, break. Failsafe from spam calling
       if (counter === 3) break;
+    }
+
+    if (recommendations.length === 0) {
+      await callWhatsAppAPI(
+        to,
+        "Sorry, we couldn't find any recommendations for you. Please try again."
+      );
+      return;
     }
 
     // testing group by source
