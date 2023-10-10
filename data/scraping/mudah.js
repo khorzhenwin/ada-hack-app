@@ -55,13 +55,20 @@ export async function getMudahMyProducts(product = "", pageNo = 1) {
     var name_html_class = "";
     if ($(".sc-cqCuEk.iMqSjF").length != 0)
       name_html_class = ".sc-cqCuEk.iMqSjF";
-    else if ($(".sc-dqBHgY.IdWpP").length != 0)
-      name_html_class = ".sc-dqBHgY.IdWpP";
     else if ($(".sc-eInJlc.iCLkHj").length != 0)
       name_html_class = ".sc-eInJlc.iCLkHj";
     else if ($(".sc-jwKygS.BZRPK").length != 0)
       name_html_class = ".sc-jwKygS.BZRPK";
-    // console.log(name_html_class + " : " + $(name_html_class).length);
+    else if ($(".sc-dqBHgY.IdWpP").length != 0)
+      name_html_class = ".sc-dqBHgY.IdWpP";
+    else if ($(".sc-kfGgVZ.cSAGbq").length != 0)
+      name_html_class = ".sc-kfGgVZ.cSAGbq";
+    else if ($(".sc-bEjcJn.fEleSG").length != 0)
+      name_html_class = ".sc-bEjcJn.fEleSG";
+    else if ($(".sc-bmyXtO.kLXReI").length != 0)
+      name_html_class = ".sc-bmyXtO.kLXReI";
+
+    console.log(name_html_class + " : " + $(name_html_class).length);
     $(name_html_class).each((i, e) => {
       product_array[i]["name"] = $(e)
         .attr()
@@ -75,32 +82,36 @@ export async function getMudahMyProducts(product = "", pageNo = 1) {
       price_html_class = ".sc-bYSBpT.kwGkYp";
     else if ($(".sc-qrIAp.hXuQJX").length != 0)
       price_html_class = ".sc-qrIAp.hXuQJX";
+    else if ($(".sc-gzOgki.hwbxyd").length != 0)
+      price_html_class = ".sc-gzOgki.hwbxyd";
+    else if ($(".sc-ebFjAB.cDEzks").length != 0)
+      price_html_class = ".sc-ebFjAB.cDEzks";
+    else if ($(".sc-eKZiaR.cJCljr").length != 0)
+      price_html_class = ".sc-eKZiaR.cJCljr";
     else price_html_class = ".sc-hzDEsm.ftGocf";
     // console.log(price_html_class + " : " + $(price_html_class).length);
     $(price_html_class).each((i, e) => {
-      product_array[i]["price"] = $(e)
-        .text()
-        .replace(/(\s+)/g, " ")
-        .replace("RM ", "")
-        .trim();
+      product_array[i]["price"] =
+        $(e).text().replace(/(\s+)/g, " ").replace("RM ", "").trim() + ".00";
       product_array[i]["rating"] = "";
       product_array[i]["seller_name"] = "";
+      product_array[i]["seller_location"] = "";
     });
 
     // The product seller location
-    var location_html_class = "";
-    if ($(".sc-dNLxif.eWZRuS").length != 0)
-      location_html_class = ".sc-dNLxif.eWZRuS";
-    else if ($(".sc-TFwJa.eHevBI").length != 0)
-      location_html_class = ".sc-TFwJa.eHevBI";
-    else location_html_class = ".sc-kxynE.jyeGVA";
-    // console.log(location_html_class + " : " + $(location_html_class).length);
-    $(location_html_class).each((i, e) => {
-      product_array[i]["seller_location"] = $(e)
-        .text()
-        .replace(/(\s+)/g, " ")
-        .trim();
-    });
+    // var location_html_class = "";
+    // if ($(".sc-dNLxif.eWZRuS").length != 0)
+    //   location_html_class = ".sc-dNLxif.eWZRuS";
+    // else if ($(".sc-TFwJa.eHevBI").length != 0)
+    //   location_html_class = ".sc-TFwJa.eHevBI";
+    // else location_html_class = ".sc-kxynE.jyeGVA";
+    // // console.log(location_html_class + " : " + $(location_html_class).length);
+    // $(location_html_class).each((i, e) => {
+    //   product_array[i]["seller_location"] = $(e)
+    //     .text()
+    //     .replace(/(\s+)/g, " ")
+    //     .trim();
+    // });
 
     // The product page url
     var productURL_html_class = "";
@@ -108,6 +119,14 @@ export async function getMudahMyProducts(product = "", pageNo = 1) {
       productURL_html_class = ".sc-giadOv.dOjdcz";
     else if ($(".sc-cIShpX.jvoCyo").length != 0)
       productURL_html_class = ".sc-cIShpX.jvoCyo";
+    else if ($(".sc-bmyXtO.kLXReI").length != 0)
+      productURL_html_class = ".sc-bmyXtO.kLXReI";
+    else if ($(".sc-dqBHgY.IdWpP").length != 0)
+      productURL_html_class = ".sc-dqBHgY.IdWpP";
+    else if ($(".sc-kfGgVZ.cSAGbq").length != 0)
+      productURL_html_class = ".sc-kfGgVZ.cSAGbq";
+    else if ($(".sc-bEjcJn.fEleSG").length != 0)
+      productURL_html_class = ".sc-bEjcJn.fEleSG";
     else productURL_html_class = ".sc-etwtAo.jTnCIh";
     // console.log(productURL_html_class + " : " + $(productURL_html_class).length);
     $(productURL_html_class).each((i, e) => {
@@ -154,6 +173,6 @@ export async function getMudahMyProducts(product = "", pageNo = 1) {
   }
 }
 
-// getMudahMyProducts("monitor stand", 2).then((arr) => {
+// getMudahMyProducts("monitor stand", 1).then((arr) => {
 //   console.log(arr);
 // });

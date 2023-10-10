@@ -77,10 +77,10 @@ const callRecommendationsAPI = async (keyword) => {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
-  
-  if (recommendationsResponse){
+
+  if (recommendationsResponse) {
     return Promise.resolve(recommendationsResponse.json());
-  }else{
+  } else {
     return null;
   }
 };
