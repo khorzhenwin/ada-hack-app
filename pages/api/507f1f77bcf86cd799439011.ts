@@ -218,8 +218,14 @@ const callGetCartItemsAPI = async (userId: string) => {
   return Promise.resolve(getCartItemsResponse.json());
 };
 
-const isCheckout = (text: String) => {
+// Keyword detection for checkout (can check)
+const isCheckout = (text) => {
   let sampleWordsForCheckout = ["checkout"];
+  return text.split(" ").some((word) => {
+    return sampleWordsForCheckout.includes(
+      word.toLowerCase().replace(",", "").replace(".", "")
+    );
+  });
 };
 
 // POST Method
