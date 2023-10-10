@@ -99,7 +99,7 @@ const isAddToShoppingCart = (text: string) => {
   });
 };
 
-const getRecommendationFromDB = (text: string) => {};
+const getRecommendationFromDB = (text: string, userId: string) => {};
 
 const callPostCartItemsAPI = async (item: CartItem) => {
   const postCartItemsEndpoint = `https://ada-hack-app.vercel.app/api/cart/items`;
@@ -158,10 +158,12 @@ export default async function handler(req, res) {
     res.status(200).json({ message: "success" });
     // get keywords from /api/keywords
     const keywordsResponse = await callKeywordsAPI(text);
-    const keywords = keywordsResponse.keywords.split(",");
+    // const keywords = keywordsResponse.keywords.split(",");
 
     const recommendations = [];
     let counter = 0;
+
+    const keywords = ["party"];
 
     // fetch recommendations from /api/recommendations
     for (const keyword of keywords) {
@@ -201,7 +203,7 @@ export default async function handler(req, res) {
     });
 
     // testing implementing adding recommendations to db so it can be accessed when adding to cart
-    RecommendationsRepository.addItemsByUserId(to, groupedBySource);
+    // RecommendationsRepository.addItemsByUserId(to, groupedBySource);
 
     // call /api/whatsapp to send message to user
     await callWhatsAppAPI(to, craftRecommendationsMessage(recommendations));
