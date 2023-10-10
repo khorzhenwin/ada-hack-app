@@ -153,17 +153,26 @@ const callPostCartItemsAPI = async (item: CartItem[], userId: string) => {
 };
 
 const isViewShoppingCart = (text: string) => {
-  let sampleWordsForViewCart = [
-    "view cart",
-    "view product",
-    "see items",
-    "see cart",
+  let sampleInitialWordsForViewCart = ["view", "see", "look"];
+
+  let sampleDeterminerWordsForViewCart = [
+    "cart",
+    "product",
+    "products",
+    "item",
+    "items",
   ];
-  return text.split(" ").some((word) => {
-    sampleWordsForViewCart.includes(
-      word.toLowerCase().replace(",", "").replace(".", "")
-    );
+
+  var indicator = 0;
+  text.split(" ").forEach((word) => {
+    let cleaned = word.toLowerCase().replace(",", "").replace(".", "");
+    if (sampleInitialWordsForViewCart.includes(cleaned)) indicator++;
+
+    if (sampleDeterminerWordsForViewCart.includes(cleaned) && indicator === 1)
+      return true;
   });
+
+  return false;
 };
 
 const callGetCartItemsAPI = async (userId: string) => {
@@ -172,7 +181,7 @@ const callGetCartItemsAPI = async (userId: string) => {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
-  return await getCartItemsResponse.json();
+  return Promise.resolve(getCartItemsResponse.json());
 };
 
 const isCheckout = (text: String) => {
@@ -234,10 +243,10 @@ export default async function handler(req, res) {
         keyword.toLowerCase().replace(/\s+/g, "-").trim()
       );
 
-      if (recommendationsResponse.lazada.length > 0) {
-        recommendationsResponse.lazada[0].source = "Lazada";
-        recommendations.push(recommendationsResponse.lazada[0]);
-      }
+      // if (recommendationsResponse.lazada.length > 0) {
+      //   recommendationsResponse.lazada[0].source = "Lazada";
+      //   recommendations.push(recommendationsResponse.lazada[0]);
+      // }
       if (recommendationsResponse.carousell.length > 0) {
         recommendationsResponse.carousell[0].source = "Carousell";
         recommendations.push(recommendationsResponse.carousell[0]);
@@ -275,6 +284,7 @@ export default async function handler(req, res) {
     const result = await addChoicesToCart(text, to);
 
     await callWhatsAppAPI(to, result);
+  } else if (isViewShoppingCart(text)) {
   } else {
     res.status(200).json({ message: "success" });
     // chat with LLM by calling /api/chat

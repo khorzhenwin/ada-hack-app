@@ -7,7 +7,7 @@ const cheerio = require("cheerio");
 /**
  * @param {string} product - product to be searched
  * @param {number} pageNo - get the data of the top (x) to top (x + 2) products, x = pageNo
- * @returns {Promise<JSON[]>} json object containing the products
+ * @returns {Promise<JSON[]>} array object containing the products
  */
 export async function getMudahMyProducts(product = "", pageNo = 1) {
   try {

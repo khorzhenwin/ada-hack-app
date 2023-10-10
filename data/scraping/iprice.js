@@ -105,6 +105,6 @@ export async function getIpriceProducts(product = "", pageNo = 1) {
   }
 }
 
-// getIpriceProducts("monitor stand", 2).then((product_arr) => {
+// getIpriceProducts("monitor stand", 1).then((product_arr) => {
 //   console.log(product_arr);
 // });

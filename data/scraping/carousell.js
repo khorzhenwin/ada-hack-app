@@ -17,8 +17,7 @@ export async function getCarousellProducts(product = "", pageNo = 1) {
 
     const search_url =
       "https://www.carousell.com.my/search/" +
-      product.replace(/\s+/g, " ").trim().replace(" ", "+") +
-      "?addRecent=false&canChangeKeyword=false&includeSuggestions=false&is_bp_enabled=true";
+      product.replace(/\s+/g, " ").trim().replace(" ", "+");
     console.log("Search URL used: " + search_url);
 
     const response_request = await axios.request({
@@ -34,36 +33,37 @@ export async function getCarousellProducts(product = "", pageNo = 1) {
     const $ = cheerio.load(response_request.data);
 
     // checking if there are any products found
-    if ($(".D_oy.D_ov.D_oz.D_oC.D_oG.D_oJ.D_oL.D_oH.D_oP").length == 0) {
+    if ($(".D_or.D_of.D_os.D_ow.D_oz.D_oB.D_oE.D_o_.D_oI").length == 0) {
       console.log(`==> No products of '${product}' found on Carousell`);
       return [];
     }
 
     // The product image url
-    $(".D_yQ.D_Zj").each((i, e) => {
+    $(".D_zc.D_ZG").each((i, e) => {
       product_array.push({
         image: $(e).attr().src.replace(/(\s+)/g, " ").trim(),
       });
     });
 
     // The product names
-    $(".D_oy.D_ov.D_oz.D_oC.D_oG.D_oJ.D_oL.D_oH.D_oP").each((i, e) => {
+    $(".D_or.D_of.D_os.D_ow.D_oz.D_oB.D_oE.D_o_.D_oI").each((i, e) => {
       product_array[i]["name"] = $(e).text().replace(/(\s+)/g, " ").trim();
     });
 
     // The product prices
-    $(".D_oy.D_ov.D_oz.D_oC.D_oF.D_oJ.D_oM.D_oO").each((i, e) => {
-      product_array[i]["price"] = $(e)
-        .text()
-        .replace(/(\s+)/g, " ")
-        .replace("RM", "")
-        .replace(",", "")
-        .trim();
+    $(".D_or.D_of.D_os.D_ow.D_oy.D_oB.D_oF.D_oH").each((i, e) => {
+      product_array[i]["price"] =
+        $(e)
+          .text()
+          .replace(/(\s+)/g, " ")
+          .replace("RM", "")
+          .replace(",", "")
+          .trim() + ".00";
       product_array[i]["rating"] = "";
     });
 
     // The product store name (seller name)
-    $(".D_oy.D_ov.D_oz.D_oC.D_oF.D_oJ.D_oM.D_oP").each((i, e) => {
+    $(".D_or.D_of.D_os.D_ow.D_oy.D_oB.D_oF.D_oI").each((i, e) => {
       product_array[i]["seller_name"] = $(e)
         .text()
         .replace(/(\s+)/g, " ")
@@ -72,7 +72,7 @@ export async function getCarousellProducts(product = "", pageNo = 1) {
     });
 
     // The product page url
-    $(".D_AB a:not(.D_AH.D_oS)").each((i, e) => {
+    $("div.D_Ai a:not(.D_An.D_oL)").each((i, e) => {
       product_array[i]["url"] =
         "https://www.carousell.com.my" + $(e).attr().href.trim();
     });
@@ -115,6 +115,6 @@ export async function getCarousellProducts(product = "", pageNo = 1) {
   }
 }
 
-// getCarousellProducts("monitor stand", 3).then((arr) => {
+// getCarousellProducts("monitor stand", 1).then((arr) => {
 //   console.log(arr);
 // });
