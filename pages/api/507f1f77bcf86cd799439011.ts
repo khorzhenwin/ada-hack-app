@@ -287,7 +287,7 @@ export default async function handler(req, res) {
       //   recommendationsResponse.lazada[0].source = "Lazada";
       //   recommendations.push(recommendationsResponse.lazada[0]);
       // }
-      if (recommendationsResponse.carousell.length > 0) {
+      if (recommendationsResponse.carousell && recommendationsResponse.carousell.length > 0) {
         recommendationsResponse.carousell[0].source = "Carousell";
         recommendations.push(recommendationsResponse.carousell[0]);
       }
