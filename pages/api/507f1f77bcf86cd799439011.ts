@@ -287,7 +287,10 @@ export default async function handler(req, res) {
       //   recommendationsResponse.lazada[0].source = "Lazada";
       //   recommendations.push(recommendationsResponse.lazada[0]);
       // }
-      if (recommendationsResponse.carousell && recommendationsResponse.carousell.length > 0) {
+      if (
+        recommendationsResponse.carousell &&
+        recommendationsResponse.carousell.length > 0
+      ) {
         recommendationsResponse.carousell[0].source = "Carousell";
         recommendations.push(recommendationsResponse.carousell[0]);
       }
@@ -343,7 +346,7 @@ export default async function handler(req, res) {
     );
     return;
   } else {
-    res.status(200).json({ message: "success" });
+    res.status(200).json({ message: "success at error" });
     // chat with LLM by calling /api/chat
     const chatResponse = await callChatAPI(text, to);
 
