@@ -19,7 +19,7 @@ const craftRecommendationsMessage = (recommendations: Array<any>) => {
 
   let count = 1;
   resultArray.forEach((recommendations) => {
-    message += `=== *Source: ${recommendations[0].source}* ===\n`;
+    message += `===== *Source: ${recommendations[0].source}* =====\n`;
     recommendations.forEach((recommendation) => {
       message += `${count++}. *${recommendation.name}*\nRM ${
         recommendation.price
@@ -87,7 +87,7 @@ const isAddToShoppingCart = (text: string) => {
     "buying",
     "order",
     "ordering",
-    "shopping list",
+    "list",
     "purchase",
     "purchasing",
     "basket",
@@ -109,6 +109,29 @@ const callPostCartItemsAPI = async (item: CartItem) => {
     body: JSON.stringify({ item: item, chatId: "" }),
   });
   return Promise.resolve(postCartItemsResponse.json());
+};
+
+const isViewShoppingCart = (text: string) => {
+  let sampleWordsForViewCart = [
+    "view cart",
+    "view product",
+    "see items",
+    "see cart",
+  ];
+  return text.split(" ").some((word) => {
+    sampleWordsForViewCart.includes(
+      word.toLowerCase().replace(",", "").replace(".", "")
+    );
+  });
+};
+
+const callGetCartItemsAPI = async (userId: string) => {
+  const getCartItemsEndpoint = `https://ada-hack-app.vercel.app/api/cart/items?userId=${userId}`;
+  const getCartItemsResponse = await fetch(getCartItemsEndpoint, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
+  return await getCartItemsResponse.json();
 };
 
 const isCheckout = (text: String) => {
@@ -158,12 +181,10 @@ export default async function handler(req, res) {
     res.status(200).json({ message: "success" });
     // get keywords from /api/keywords
     const keywordsResponse = await callKeywordsAPI(text);
-    // const keywords = keywordsResponse.keywords.split(",");
+    const keywords = keywordsResponse.keywords.split(",");
 
     const recommendations = [];
     let counter = 0;
-
-    const keywords = ["party"];
 
     // fetch recommendations from /api/recommendations
     for (const keyword of keywords) {
