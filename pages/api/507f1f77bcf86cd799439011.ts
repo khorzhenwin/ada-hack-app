@@ -77,7 +77,12 @@ const callRecommendationsAPI = async (keyword) => {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
-  return Promise.resolve(recommendationsResponse.json());
+  
+  if (recommendationsResponse){
+    return Promise.resolve(recommendationsResponse.json());
+  }else{
+    return null;
+  }
 };
 
 const isAddToShoppingCart = (text: string) => {
