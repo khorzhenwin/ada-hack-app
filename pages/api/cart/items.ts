@@ -45,14 +45,14 @@ export default async function handler(req, res) {
     const chatId: string = req.body.chatId;
     const userId: string = req.body.userId;
     req.body.item["id"] = uuidv4();
-    const item: CartItem = req.body.item;
+    const item: CartItem[] = req.body.item;
 
     if (chatId) {
       const exist =
         (await CartRepository.findByChatId(chatId)).data() !==
         (null || undefined);
       if (!exist) return res.status(404).json({ message: "Cart not found" });
-      await CartRepository.addItemByChatId(chatId, item);
+      await CartRepository.addCartItemsByChatId(chatId, item);
       res.status(200).json({ message: "Item added to cart" });
     }
 
@@ -61,7 +61,7 @@ export default async function handler(req, res) {
         (await CartRepository.findByUserId(userId)).data() !==
         (null || undefined);
       if (!exist) return res.status(404).json({ message: "Cart not found" });
-      await CartRepository.addItemByUserId(userId, item);
+      await CartRepository.addCartItemsByUserId(userId, item);
       res.status(200).json({ message: "Item added to cart" });
     }
 
