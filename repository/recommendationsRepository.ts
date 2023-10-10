@@ -48,25 +48,18 @@ export default class RecommendationsRepository {
     return await addDoc(RecommendationsRepository.ref, values);
   };
 
-  static addRecommendationsByUserId = async (userId: string, items: any) => {
+  static updateAllRecommendationsByUserId = async (
+    userId: string,
+    items: Recommendations
+  ) => {
     const docRef = await RecommendationsRepository.findByUserId(userId);
-    await RecommendationsRepository.update(docRef!.ref, {
-      iprice: [...docRef!.data().iprice, items.iprice],
-      // lazada: [...docRef!.data().lazada, items.lazada],
-      mudah: [...docRef!.data().mudah, items.mudah],
-      carousell: [...docRef!.data().carousell, items.carousell],
+    await RecommendationsRepository.update(docRef.ref, {
+      iprice: items.iprice,
+      // lazada: items.lazada,
+      mudah: items.mudah,
+      carousell: items.carousell,
     });
   };
-
-  // static addMessage = async (id: string, message: string) => {
-  //   const docRef = await RecommendationsRepository.findById(id);
-  //   const newMessage = {
-  //     content: message,
-  //   };
-  //   await RecommendationsRepository.update(docRef!.ref, {
-  //     messageHistory: [...docRef!.data().messageHistory, newMessage],
-  //   });
-  // };
 
   static findAll = async () => await getDocs(RecommendationsRepository.ref);
 }

@@ -3,6 +3,7 @@ import {
   getIpriceProducts,
   getMudahMyProducts,
 } from "../../../data/scraping";
+import Recommendations from "../../../interfaces/recommendations";
 import RecommendationsRepository from "../../../repository/recommendationsRepository";
 
 // POST Method
@@ -28,15 +29,15 @@ export default async function handler(req, res) {
     const mudah = await getMudahMyProducts(keyword.toLowerCase().trim());
 
     if (carousell.length > 0) {
-      carousell[0]["source"] = "Carousell";
+      carousell[0]["source"] = "carousell";
       recommendations.push(carousell[0]);
     }
     if (mudah.length > 0) {
-      mudah[0]["source"] = "Mudah.my";
+      mudah[0]["source"] = "mudah";
       recommendations.push(mudah[0]);
     }
     if (iprice.length > 0) {
-      iprice[0]["source"] = "iPrice";
+      iprice[0]["source"] = "iprice";
       recommendations.push(iprice[0]);
     }
     counter++;
@@ -53,15 +54,27 @@ export default async function handler(req, res) {
     return;
   }
 
-  // testing group by source
-  const groupedBySource = {};
+  const carousell = [];
+  const iprice = [];
+  const mudah = [];
+
   recommendations.forEach((recommendation) => {
     const source = recommendation.source;
-    groupedBySource[source] = groupedBySource[source] || [];
-    groupedBySource[source].push(recommendation);
+    if (source === "carousell") carousell.push(recommendation);
+    if (source === "mudah") mudah.push(recommendation);
+    if (source === "iprice") iprice.push(recommendation);
   });
 
-  await RecommendationsRepository.addRecommendationsByUserId(
+  const groupedBySource: Recommendations = {
+    carousell: carousell,
+    mudah: mudah,
+    iprice: iprice,
+    id: to,
+    chatId: "",
+    lazada: [],
+  };
+
+  await RecommendationsRepository.updateAllRecommendationsByUserId(
     to,
     groupedBySource
   );
@@ -74,7 +87,7 @@ const callWhatsAppAPI = async (to, response) => {
     text: response.toString(),
   };
 
-  const whatsappEndpoint = "http://ada-hack-app.vercel.app/api/whatsapp";
+  const whatsappEndpoint = "https://ada-hack-app.vercel.app/api/whatsapp";
   const res = await fetch(whatsappEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
