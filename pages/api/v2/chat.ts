@@ -6,7 +6,6 @@ import Cart from "../../../interfaces/cart";
 import CartRepository from "../../../repository/cartRepository";
 import Recommendations from "../../../interfaces/recommendations";
 import RecommendationsRepository from "../../../repository/recommendationsRepository";
-import querystring from "querystring";
 
 const { DiscussServiceClient } = require("@google-ai/generativelanguage");
 const { GoogleAuth } = require("google-auth-library");
@@ -141,11 +140,11 @@ const callWhatsAppAPI = async (to, response) => {
     text: response.toString(),
   };
 
-  const whatsappEndpoint = "https://ada-hack-app.vercel.app/api/whatsapp";
+  const whatsappEndpoint = "http://localhost:3000/api/whatsapp";
   const res = await fetch(whatsappEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: querystring.stringify(message),
+    body: JSON.stringify(message),
   });
   return Promise.resolve(res.json());
 };

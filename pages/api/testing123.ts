@@ -1,5 +1,3 @@
-import querystring from "querystring";
-
 export default async function handler(req, res) {
   //   if (req.method !== "POST") {
   //     res.status(405).json({ message: "Method not allowed" });
@@ -41,7 +39,7 @@ async function sendWAmessage(text, phoneNumber) {
   const res = await fetch(endpoint, {
     method: "POST",
     headers: header,
-    body: querystring.stringify(req),
+    body: JSON.stringify(req),
   });
 
   if (res.status === 200 || res.status === 201) {

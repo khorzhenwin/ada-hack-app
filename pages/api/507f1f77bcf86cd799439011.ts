@@ -1,6 +1,5 @@
 import CartItem from "../../interfaces/cartItem";
 import RecommendationsRepository from "../../repository/recommendationsRepository";
-import querystring from "querystring";
 
 const craftRecommendationsMessage = (recommendations: Array<any>) => {
   let message = "Here are some recommendations for you:\n\n";
@@ -65,11 +64,11 @@ const callWhatsAppAPI = async (to, response) => {
     text: response.toString(),
   };
 
-  const whatsappEndpoint = "https://ada-hack-app.vercel.app/api/whatsapp";
+  const whatsappEndpoint = "http://localhost:3000/api/whatsapp";
   const res = await fetch(whatsappEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: querystring.stringify(message),
+    body: JSON.stringify(message),
   });
   return Promise.resolve(res.json());
 };
@@ -80,22 +79,22 @@ const callChatAPI = async (text, to) => {
     userId: to,
   };
 
-  const chatEndpoint = "https://ada-hack-app.vercel.app/v2/api/chat";
+  const chatEndpoint = "http://localhost:3000/api/v2/chat";
   const chatResponse = await fetch(chatEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: querystring.stringify(body),
+    body: JSON.stringify(body),
   });
 
   return Promise.resolve(chatResponse.json());
 };
 
 const callKeywordsAPI = async (text) => {
-  const keywordsEndpoint = "https://ada-hack-app.vercel.app/api/keywords";
+  const keywordsEndpoint = "http://localhost:3000/api/keywords";
   const keywordsResponse = await fetch(keywordsEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: querystring.stringify({ input: text }),
+    body: JSON.stringify({ input: text }),
   });
   return Promise.resolve(keywordsResponse.json());
 };
@@ -106,11 +105,11 @@ const callRecommendationsAPI = async (keywords, to) => {
     to: to,
   };
 
-  const recommendationsEndpoint = `https://ada-hack-app.vercel.app/api/v2/recommendations`;
+  const recommendationsEndpoint = `http://localhost:3000/api/v2/recommendations`;
   await fetch(recommendationsEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: querystring.stringify(body),
+    body: JSON.stringify(body),
   });
 };
 
@@ -201,7 +200,7 @@ const addChoicesToCart = async (text: string, userId: string) => {
 };
 
 const callPostCartItemsAPI = async (item: CartItem[], userId: string) => {
-  const postCartItemsEndpoint = `https://ada-hack-app.vercel.app/api/cart/items`;
+  const postCartItemsEndpoint = `http://localhost:3000/api/cart/items`;
   const postCartItemsResponse = await fetch(postCartItemsEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -232,7 +231,7 @@ const isViewShoppingCart = (text: string) => {
 };
 
 const callGetCartItemsAPI = async (userId: string) => {
-  const getCartItemsEndpoint = `https://ada-hack-app.vercel.app/api/cart/items?userId=${userId}`;
+  const getCartItemsEndpoint = `http://localhost:3000/api/cart/items?userId=${userId}`;
   const getCartItemsResponse = await fetch(getCartItemsEndpoint, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
@@ -304,7 +303,7 @@ export default async function handler(req, res) {
     );
     return;
   } else {
-    res.status(200).json({ message: "success at error" });
+    res.status(200).json({ message: "success at error, going by normal chat" });
     // chat with LLM by calling /api/chat
     await callChatAPI(text, to);
     return;

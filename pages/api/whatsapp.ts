@@ -1,5 +1,3 @@
-import querystring from "querystring";
-
 // this is a POST method
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -14,13 +12,14 @@ export default async function handler(req, res) {
   req.body.text = req.body.text; // required
 
   res.status(200).json({ message: "success" });
+
   await sendWhatsappMessage(req);
   return;
 }
 
 const sendWhatsappMessage = async (req) => {
   const waAPIKey =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRJZCI6IjY2ZDYzNDY0LTJhNjktNDg1MS05MjI1LTZjY2U3MDY2YTE2NiIsImNvdW50cnlDb2RlIjoiIiwiZW1haWwiOiJUZWFtMjBAYWRhLWFzaWEuY29tIiwiZXhwIjoyMzI4MTAyNTY4LCJpYXQiOjE2OTY5NTA1NjgsIm5hbWUiOiJBRE1JTiIsInJvbGVDb2RlIjoiT1dORVIiLCJyb2xlSWQiOiJPV05FUiIsInNpZCI6ImFwaWtleSIsInN0eXBlIjoidXNlciIsInVpZCI6ImM4OWJmNGMwLWIwMzktNGEyZC1hYjEzLTBhNDNiMTgwNGRjYyJ9.58jTStxboYisKEkzNitFH4W_sKNFZOJDY1ClGAgc82E";
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjbGllbnRJZCI6IjY2ZDYzNDY0LTJhNjktNDg1MS05MjI1LTZjY2U3MDY2YTE2NiIsImNvdW50cnlDb2RlIjoiIiwiZW1haWwiOiJUZWFtMjBAYWRhLWFzaWEuY29tIiwiZXhwIjoyMzI4MTAzMDc3LCJpYXQiOjE2OTY5NTEwNzcsIm5hbWUiOiJBRE1JTiIsInJvbGVDb2RlIjoiT1dORVIiLCJyb2xlSWQiOiJPV05FUiIsInNpZCI6ImFwaWtleSIsInN0eXBlIjoidXNlciIsInVpZCI6ImM4OWJmNGMwLWIwMzktNGEyZC1hYjEzLTBhNDNiMTgwNGRjYyJ9.x2LH4f3cfHJMXOrx74nwG3iAXdbqgPAlWTdnNrrIJzI";
   const endpoint = "https://bizmsgapi.ada-asia.com/prod/message";
 
   const header = {
@@ -31,11 +30,11 @@ const sendWhatsappMessage = async (req) => {
   const res = await fetch(endpoint, {
     method: "POST",
     headers: header,
-    body: querystring.stringify(req.body),
+    body: JSON.stringify(req.body),
   });
 
   if (res.status === 200 || res.status === 201) {
-    return res.json();
+    return await res.json();
   } else {
     return null;
   }
