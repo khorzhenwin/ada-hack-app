@@ -77,6 +77,13 @@ export default class CartRepository {
     });
   };
 
+  static addCartItemsByChatId = async (chatId: string, item: CartItem[]) => {
+    const docRef = await CartRepository.findByChatId(chatId);
+    await CartRepository.update(docRef!.ref, {
+      cartItems: [...item],
+    });
+  };
+
   static addCartItemsByUserId = async (userId: string, item: CartItem[]) => {
     const docRef = await CartRepository.findByUserId(userId);
     await CartRepository.update(docRef!.ref, {
