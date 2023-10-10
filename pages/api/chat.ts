@@ -4,6 +4,8 @@ import Context from "../../interfaces/context";
 import { v4 as uuidv4 } from "uuid";
 import Cart from "../../interfaces/cart";
 import CartRepository from "../../repository/cartRepository";
+import Recommendations from "../../interfaces/recommendations";
+import RecommendationsRepository from "../../repository/recommendationsRepository";
 
 const { DiscussServiceClient } = require("@google-ai/generativelanguage");
 const { GoogleAuth } = require("google-auth-library");
@@ -34,8 +36,18 @@ const createNewChat = (userId: string) => {
     cartItems: [],
   };
 
+  const recommendation: Recommendations = {
+    id: userId,
+    chatId: id,
+    iprice: [],
+    lazada: [],
+    mudah: [],
+    carousell: [],
+  };
+
   CartRepository.add(cart);
   ChatRepository.add(newChat);
+  RecommendationsRepository.add(recommendation);
 
   return newChat;
 };

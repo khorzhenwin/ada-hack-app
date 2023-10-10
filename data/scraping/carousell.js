@@ -7,7 +7,7 @@ const cheerio = require("cheerio");
 /**
  * @param {string} product - product to be searched *
  * @param {number} pageNo - get the data of the top (x) to top (x + 2) products, x = pageNo
- * @returns {Array<JSON>} array object containing the products
+ * @returns {Promise<JSON[]>} array object containing the products
  */
 export async function getCarousellProducts(product = "", pageNo = 1) {
   try {
@@ -78,22 +78,22 @@ export async function getCarousellProducts(product = "", pageNo = 1) {
     });
 
     // The product condition
-    var temp = 0;
-    $(".D_oy.D_ot.D_oz.D_oC.D_oF.D_oJ.D_oL.D_oP").each((_, e) => {
-      let row = $(e).text().replace(/(\s+)/g, " ").trim();
-      if (row != "Free delivery" && row.length != 0) {
-        product_array[temp]["condition"] = row;
-        temp++;
-      }
-    });
+    // var temp = 0;
+    // $(".D_oy.D_ot.D_oz.D_oC.D_oF.D_oJ.D_oL.D_oP").each((_, e) => {
+    //   let row = $(e).text().replace(/(\s+)/g, " ").trim();
+    //   if (row != "Free delivery" && row.length != 0) {
+    //     product_array[temp]["condition"] = row;
+    //     temp++;
+    //   }
+    // });
 
     // The product likes/hearts
-    $(".D_oy.D_ot.D_oz.D_oC.D_oG.D_oJ.D_oL.D_oP").each((i, e) => {
-      let row = $(e).text().replace(/(\s+)/g, " ").trim();
-      row == " "
-        ? (product_array[i]["likes"] = "0")
-        : (product_array[i]["likes"] = row);
-    });
+    // $(".D_oy.D_ot.D_oz.D_oC.D_oG.D_oJ.D_oL.D_oP").each((i, e) => {
+    //   let row = $(e).text().replace(/(\s+)/g, " ").trim();
+    //   row == " "
+    //     ? (product_array[i]["likes"] = "0")
+    //     : (product_array[i]["likes"] = row);
+    // });
 
     // console.log(product_array);
     console.log(`Done scraping Carousell for '${product}'`);

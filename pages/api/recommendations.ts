@@ -16,7 +16,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { category, pageNo = 1 } = req.query;
+  const { category, pageNo = 1, userId } = req.query;
   if (!category) {
     res.status(400).json({ message: "Missing query parameters" });
     return;
@@ -39,6 +39,9 @@ export default async function handler(req, res) {
     iprice,
     mudah,
   };
+
+  // testing implementing adding recommendations to db so it can be accessed when adding to cart
+  RecommendationsRepository.addItemsByUserId(userId, response);
 
   res.status(200).json(response);
 }

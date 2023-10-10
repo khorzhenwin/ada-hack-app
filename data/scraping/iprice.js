@@ -7,7 +7,7 @@ const cheerio = require("cheerio");
 /**
  * @param {string} product - product to be searched
  * @param {number} pageNo - get the data of the top (x) to top (x + 2) products, x = pageNo
- * @returns {Array<JSON>} array object containing the products
+ * @returns {Promise<JSON[]>} array object containing the products
  */
 export async function getIpriceProducts(product = "", pageNo = 1) {
   try {
@@ -81,9 +81,9 @@ export async function getIpriceProducts(product = "", pageNo = 1) {
     });
 
     // The product original ecommerce store
-    $(".zO").each((i, e) => {
-      product_array[i]["ecommerce"] = $(e).text().replace(/(\s+)/g, " ").trim();
-    });
+    // $(".zO").each((i, e) => {
+    //   product_array[i]["ecommerce"] = $(e).text().replace(/(\s+)/g, " ").trim();
+    // });
 
     // console.log(product_array);
     console.log(`Done scraping iprice for '${product}'`);

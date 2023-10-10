@@ -7,7 +7,7 @@ const cheerio = require("cheerio");
 /**
  * @param {string} product - product to be searched
  * @param {number} pageNo - get the data of the top (x) to top (x + 2) products, x = pageNo
- * @returns {Array<JSON>} json object containing the products
+ * @returns {Promise<JSON[]>} json object containing the products
  */
 export async function getMudahMyProducts(product = "", pageNo = 1) {
   try {
@@ -115,24 +115,24 @@ export async function getMudahMyProducts(product = "", pageNo = 1) {
     });
 
     // The product condition
-    var condition_html_class = "";
-    if ($(".sc-bGbJRg.dXZAHJ").length != 0)
-      condition_html_class = ".sc-bGbJRg.dXZAHJ";
-    else if ($(".sc-iGrrsa.csUzpc").length != 0)
-      condition_html_class = ".sc-iGrrsa.csUzpc";
-    else condition_html_class = ".sc-kTUwUJ.kIMHDB";
-    // console.log(condition_html_class + " : " + $(condition_html_class).length / 2);
-    var temp = 0;
-    $(condition_html_class).each((_, e) => {
-      if ($(e).attr().title == "Condition") {
-        product_array[temp]["condition"] = $(e)
-          .children("div")
-          .text()
-          .replace(/(\s+)/g, " ")
-          .trim();
-        temp++;
-      }
-    });
+    // var condition_html_class = "";
+    // if ($(".sc-bGbJRg.dXZAHJ").length != 0)
+    //   condition_html_class = ".sc-bGbJRg.dXZAHJ";
+    // else if ($(".sc-iGrrsa.csUzpc").length != 0)
+    //   condition_html_class = ".sc-iGrrsa.csUzpc";
+    // else condition_html_class = ".sc-kTUwUJ.kIMHDB";
+    // // console.log(condition_html_class + " : " + $(condition_html_class).length / 2);
+    // var temp = 0;
+    // $(condition_html_class).each((_, e) => {
+    //   if ($(e).attr().title == "Condition") {
+    //     product_array[temp]["condition"] = $(e)
+    //       .children("div")
+    //       .text()
+    //       .replace(/(\s+)/g, " ")
+    //       .trim();
+    //     temp++;
+    //   }
+    // });
 
     // console.log(product_json);
     console.log(`Done scraping mudah.my for '${product}'`);

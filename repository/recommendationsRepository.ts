@@ -1,5 +1,6 @@
 import { recommendationsCoverter } from "../converters/recommendationsConverter";
 import { db } from "../firebase";
+import CartItem from "../interfaces/cartItem";
 import Recommendations from "../interfaces/recommendations";
 import {
   DocumentData,
@@ -32,7 +33,7 @@ export default class RecommendationsRepository {
     await getDocs(query(this.ref, where("chatId", "==", id)));
 
   static findByUserId = async (id: string) =>
-    (await getDocs(query(this.ref, where("userId", "==", id)))).docs.at(0);
+    (await getDocs(query(this.ref, where("id", "==", id)))).docs.at(0);
 
   static update = async (
     docRef: DocumentReference<Recommendations>,
@@ -45,6 +46,16 @@ export default class RecommendationsRepository {
 
   static add = async (values: Recommendations) => {
     return await addDoc(RecommendationsRepository.ref, values);
+  };
+
+  static addItemsByUserId = async (userId: string, items: any) => {
+    const docref = await RecommendationsRepository.findByUserId(userId);
+    await RecommendationsRepository.update(docref!.ref, {
+      iprice: items.iprice,
+      lazada: items.lazada,
+      mudah: items.mudah,
+      carousell: items.carousell,
+    });
   };
 
   // static addMessage = async (id: string, message: string) => {

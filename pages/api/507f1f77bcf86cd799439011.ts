@@ -1,11 +1,30 @@
 import { is } from "cheerio/lib/api/traversing";
 import CartItem from "../../interfaces/cartItem";
 
-const craftRecommendationsMessage = (recommendations) => {
+const craftRecommendationsMessage = (recommendations: Array<any>) => {
   let message = "Here are some recommendations for you:\n\n";
-  for (const recommendation of recommendations) {
-    message += `${recommendation.name}\nRM ${recommendation.price}\n${recommendation.url}\nSource: ${recommendation.source}\n\n`;
-  }
+  // for (const recommendation of recommendations) {
+  //   message += `${recommendation.name}\nRM ${recommendation.price}\n${recommendation.url}\nSource: ${recommendation.source}\n\n`;
+  // }
+
+  // testing group by source
+  const groupedBySource = {};
+  recommendations.forEach((recommendation) => {
+    const source = recommendation.source;
+    groupedBySource[source] = groupedBySource[source] || [];
+    groupedBySource[source].push(recommendation);
+  });
+  const resultArray: Array<Array<any>> = Object.values(groupedBySource);
+
+  let count = 1;
+  resultArray.forEach((recommendations, i) => {
+    message += `=== *Source: ${recommendations[0].source}* ===`;
+    recommendations.forEach((recommendation, j) => {
+      message += `${count++}. *${recommendation.name}*\nRM ${
+        recommendation.price
+      }\n${recommendation.url}\n\n`;
+    });
+  });
   return message;
 };
 
@@ -50,8 +69,8 @@ const callKeywordsAPI = async (text) => {
   return Promise.resolve(keywordsResponse.json());
 };
 
-const callRecommendationsAPI = async (keyword) => {
-  const recommendationsEndpoint = `https://ada-hack-app.vercel.app/api/recommendations?category=${keyword}`;
+const callRecommendationsAPI = async (keyword, userId: string) => {
+  const recommendationsEndpoint = `https://ada-hack-app.vercel.app/api/recommendations?category=${keyword}&userId=${userId}`;
   const recommendationsResponse = await fetch(recommendationsEndpoint, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
@@ -59,7 +78,7 @@ const callRecommendationsAPI = async (keyword) => {
   return Promise.resolve(recommendationsResponse.json());
 };
 
-const isAddToShoppingCart = (text: String) => {
+const isAddToShoppingCart = (text: string) => {
   let sampleWordsForCart = [
     "cart",
     "buy",
@@ -144,7 +163,8 @@ export default async function handler(req, res) {
     for (const keyword of keywords) {
       // push 1 recommendation from each source for each keyword
       const recommendationsResponse = await callRecommendationsAPI(
-        keyword.toLowerCase().replace(/\s+/g, '-')
+        keyword.toLowerCase().replace(/\s+/g, "-"),
+        to
       );
 
       if (recommendationsResponse.lazada.length > 0) {
