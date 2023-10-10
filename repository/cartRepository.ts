@@ -80,7 +80,7 @@ export default class CartRepository {
   static addCartItemsByUserId = async (userId: string, item: CartItem[]) => {
     const docRef = await CartRepository.findByUserId(userId);
     await CartRepository.update(docRef!.ref, {
-      cartItems: [...docRef!.data().cartItems, ...item],
+      cartItems: [...item],
     });
   };
 

@@ -30,7 +30,34 @@ const craftRecommendationsMessage = (recommendations: Array<any>) => {
   return message;
 };
 
-const craftCartMessage = (cartItems: CartItem[]) => {};
+const craftCartMessage = (cartItems: CartItem[]) => {
+  var message = "This is the overall view of your cart:\n\n";
+  var source = cartItems[0].source;
+  var count = 1;
+  var subtotal = 0;
+  var total = 0;
+
+  message += `===== *Platform: ${source}* =====`;
+
+  cartItems.forEach((item, i) => {
+    message += `${count}. *${item.name}*\nPrice: RM ${item.price}\nQuantity: ${item.quantity}\n\n`;
+
+    subtotal += parseFloat(item.price) * parseInt(item.quantity);
+
+    if (source !== cartItems[i + 1].source) {
+      total += subtotal;
+      subtotal = 0;
+      message += `*===> Subtotal: RM ${subtotal}*\n\n===== Platform: ${
+        cartItems[i + 1].source
+      } =====`;
+      source = cartItems[i + 1].source;
+    }
+  });
+
+  total += subtotal;
+
+  message += `*===> Subtotal: RM ${subtotal}*\n\n========\n*Total: RM ${total}*\n========`;
+};
 
 const callWhatsAppAPI = async (to, response) => {
   const message = {
@@ -139,7 +166,7 @@ const addChoicesToCart = async (text: string, userId: string) => {
   var cart: CartItem[] = [];
   sortedChoices.forEach((choice) => {
     let product = sortedRecommendedProducts[parseInt(choice[0]) - 1];
-    product["quantity"] = choice[1];
+    product["quantity"] = choice[1] ? choice[1] : "1";
 
     cart.push(product as any);
   });
@@ -290,10 +317,16 @@ export default async function handler(req, res) {
     res.status(200).json({ message: "success" });
     const result = await addChoicesToCart(text, to);
 
+    // call /api/whatsapp to send message to user
     await callWhatsAppAPI(to, result);
+    return;
   } else if (isViewShoppingCart(text)) {
     const cart = await callGetCartItemsAPI(to);
     const cartItems = cart.cartItems;
+
+    // call /api/whatsapp to send message to user
+    await callWhatsAppAPI(to, craftCartMessage(cartItems));
+    return;
   } else {
     res.status(200).json({ message: "success" });
     // chat with LLM by calling /api/chat
