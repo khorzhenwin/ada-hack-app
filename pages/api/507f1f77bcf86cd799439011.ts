@@ -173,7 +173,7 @@ const addChoicesToCart = async (text: string, userId: string) => {
   const sortedChoices = productChoices.sort(
     (a, b) => parseInt(a[0]) - parseInt(b[0])
   );
-
+  return { text: "test" };
   const recommendedProducts = await RecommendationsRepository.findByUserId(
     userId
   );
