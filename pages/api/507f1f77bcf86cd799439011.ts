@@ -65,7 +65,7 @@ const callWhatsAppAPI = async (to, response) => {
     text: response,
   };
 
-  const whatsappEndpoint = "https://ada-hack-app.vercel.app/api/whatsapp";
+  const whatsappEndpoint = "https://ada-hack-app.netlify.app/api/whatsapp";
   const res = await fetch(whatsappEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -80,7 +80,7 @@ const callChatAPI = async (text, to) => {
     userId: to,
   };
 
-  const chatEndpoint = "https://ada-hack-app.vercel.app/api/chat";
+  const chatEndpoint = "https://ada-hack-app.netlify.app/api/chat";
   const chatResponse = await fetch(chatEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -91,7 +91,7 @@ const callChatAPI = async (text, to) => {
 };
 
 const callKeywordsAPI = async (text) => {
-  const keywordsEndpoint = "https://ada-hack-app.vercel.app/api/keywords";
+  const keywordsEndpoint = "https://ada-hack-app.netlify.app/api/keywords";
   const keywordsResponse = await fetch(keywordsEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -101,7 +101,7 @@ const callKeywordsAPI = async (text) => {
 };
 
 const callRecommendationsAPI = async (keyword) => {
-  const recommendationsEndpoint = `https://ada-hack-app.vercel.app/api/recommendations?category=${keyword}`;
+  const recommendationsEndpoint = `https://ada-hack-app.netlify.app/api/recommendations?category=${keyword}`;
   const recommendationsResponse = await fetch(recommendationsEndpoint, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
@@ -193,7 +193,7 @@ const addChoicesToCart = async (text: string, userId: string) => {
 };
 
 const callPostCartItemsAPI = async (item: CartItem[], userId: string) => {
-  const postCartItemsEndpoint = `https://ada-hack-app.vercel.app/api/cart/items`;
+  const postCartItemsEndpoint = `https://ada-hack-app.netlify.app/api/cart/items`;
   const postCartItemsResponse = await fetch(postCartItemsEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -226,7 +226,7 @@ const isViewShoppingCart = (text: string) => {
 };
 
 const callGetCartItemsAPI = async (userId: string) => {
-  const getCartItemsEndpoint = `https://ada-hack-app.vercel.app/api/cart/items?userId=${userId}`;
+  const getCartItemsEndpoint = `https://ada-hack-app.netlify.app/api/cart/items?userId=${userId}`;
   const getCartItemsResponse = await fetch(getCartItemsEndpoint, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
