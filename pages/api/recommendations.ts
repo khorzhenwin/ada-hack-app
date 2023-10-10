@@ -6,8 +6,6 @@ import {
 } from "../../data/scraping";
 import { getLazadaProductsFromAPI } from "../../data/api";
 import { v4 as uuidv4 } from "uuid";
-import RecommendationsRepository from "../../repository/recommendationsRepository";
-import Recommendations from "../../interfaces/recommendations";
 
 // GET Method
 export default async function handler(req, res) {
@@ -39,9 +37,6 @@ export default async function handler(req, res) {
     iprice,
     mudah,
   };
-
-  // testing implementing adding recommendations to db so it can be accessed when adding to cart
-  RecommendationsRepository.addItemsByUserId(userId, response);
 
   res.status(200).json(response);
 }

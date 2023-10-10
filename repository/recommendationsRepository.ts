@@ -51,10 +51,10 @@ export default class RecommendationsRepository {
   static addItemsByUserId = async (userId: string, items: any) => {
     const docref = await RecommendationsRepository.findByUserId(userId);
     await RecommendationsRepository.update(docref!.ref, {
-      iprice: items.iprice,
-      lazada: items.lazada,
-      mudah: items.mudah,
-      carousell: items.carousell,
+      iprice: items["iPrice"] ? items["iPrice"] : [],
+      lazada: items["Lazada"] ? items["Lazada"] : [],
+      mudah: items["Mudah.my"] ? items["Mudah.my"] : [],
+      carousell: items["Carousell"] ? items["Carousell"] : [],
     });
   };
 

@@ -1,5 +1,6 @@
 import { is } from "cheerio/lib/api/traversing";
 import CartItem from "../../interfaces/cartItem";
+import RecommendationsRepository from "../../repository/recommendationsRepository";
 
 const craftRecommendationsMessage = (recommendations: Array<any>) => {
   let message = "Here are some recommendations for you:\n\n";
@@ -17,14 +18,15 @@ const craftRecommendationsMessage = (recommendations: Array<any>) => {
   const resultArray: Array<Array<any>> = Object.values(groupedBySource);
 
   let count = 1;
-  resultArray.forEach((recommendations, i) => {
+  resultArray.forEach((recommendations) => {
     message += `=== *Source: ${recommendations[0].source}* ===`;
-    recommendations.forEach((recommendation, j) => {
+    recommendations.forEach((recommendation) => {
       message += `${count++}. *${recommendation.name}*\nRM ${
         recommendation.price
       }\n${recommendation.url}\n\n`;
     });
   });
+
   return message;
 };
 
@@ -69,8 +71,8 @@ const callKeywordsAPI = async (text) => {
   return Promise.resolve(keywordsResponse.json());
 };
 
-const callRecommendationsAPI = async (keyword, userId: string) => {
-  const recommendationsEndpoint = `https://ada-hack-app.vercel.app/api/recommendations?category=${keyword}&userId=${userId}`;
+const callRecommendationsAPI = async (keyword) => {
+  const recommendationsEndpoint = `https://ada-hack-app.vercel.app/api/recommendations?category=${keyword}`;
   const recommendationsResponse = await fetch(recommendationsEndpoint, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
@@ -96,6 +98,8 @@ const isAddToShoppingCart = (text: string) => {
     );
   });
 };
+
+const getRecommendationFromDB = (text: string) => {};
 
 const callPostCartItemsAPI = async (item: CartItem) => {
   const postCartItemsEndpoint = `https://ada-hack-app.vercel.app/api/cart/items`;
@@ -163,8 +167,7 @@ export default async function handler(req, res) {
     for (const keyword of keywords) {
       // push 1 recommendation from each source for each keyword
       const recommendationsResponse = await callRecommendationsAPI(
-        keyword.toLowerCase().replace(/\s+/g, "-"),
-        to
+        keyword.toLowerCase().replace(/\s+/g, "-")
       );
 
       if (recommendationsResponse.lazada.length > 0) {
@@ -188,6 +191,17 @@ export default async function handler(req, res) {
       // if counter is 3, break. Failsafe from spam calling
       if (counter === 3) break;
     }
+
+    // testing group by source
+    const groupedBySource = {};
+    recommendations.forEach((recommendation) => {
+      const source = recommendation.source;
+      groupedBySource[source] = groupedBySource[source] || [];
+      groupedBySource[source].push(recommendation);
+    });
+
+    // testing implementing adding recommendations to db so it can be accessed when adding to cart
+    RecommendationsRepository.addItemsByUserId(to, groupedBySource);
 
     // call /api/whatsapp to send message to user
     await callWhatsAppAPI(to, craftRecommendationsMessage(recommendations));
