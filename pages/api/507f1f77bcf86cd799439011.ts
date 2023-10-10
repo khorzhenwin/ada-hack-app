@@ -64,7 +64,7 @@ const callWhatsAppAPI = async (to, response) => {
     text: response.toString(),
   };
 
-  const whatsappEndpoint = "http://ada-hack-app.vercel.app/api/whatsapp";
+  const whatsappEndpoint = "https://ada-hack-app.vercel.app/api/whatsapp";
   const res = await fetch(whatsappEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -79,7 +79,7 @@ const callChatAPI = async (text, to) => {
     userId: to,
   };
 
-  const chatEndpoint = "http://ada-hack-app.vercel.app/api/v2/chat";
+  const chatEndpoint = "https://ada-hack-app.vercel.app/api/v2/chat";
   const chatResponse = await fetch(chatEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -90,7 +90,7 @@ const callChatAPI = async (text, to) => {
 };
 
 const callKeywordsAPI = async (text) => {
-  const keywordsEndpoint = "http://ada-hack-app.vercel.app/api/keywords";
+  const keywordsEndpoint = "https://ada-hack-app.vercel.app/api/keywords";
   const keywordsResponse = await fetch(keywordsEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -105,7 +105,7 @@ const callRecommendationsAPI = async (keywords, to) => {
     to: to,
   };
 
-  const recommendationsEndpoint = `http://ada-hack-app.vercel.app/api/v2/recommendations`;
+  const recommendationsEndpoint = `https://ada-hack-app.vercel.app/api/v2/recommendations`;
   await fetch(recommendationsEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -200,7 +200,7 @@ const addChoicesToCart = async (text: string, userId: string) => {
 };
 
 const callPostCartItemsAPI = async (item: CartItem[], userId: string) => {
-  const postCartItemsEndpoint = `http://ada-hack-app.vercel.app/api/cart/items`;
+  const postCartItemsEndpoint = `https://ada-hack-app.vercel.app/api/cart/items`;
   const postCartItemsResponse = await fetch(postCartItemsEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -231,7 +231,7 @@ const isViewShoppingCart = (text: string) => {
 };
 
 const callGetCartItemsAPI = async (userId: string) => {
-  const getCartItemsEndpoint = `http://ada-hack-app.vercel.app/api/cart/items?userId=${userId}`;
+  const getCartItemsEndpoint = `https://ada-hack-app.vercel.app/api/cart/items?userId=${userId}`;
   const getCartItemsResponse = await fetch(getCartItemsEndpoint, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
