@@ -1,4 +1,3 @@
-import { is } from "cheerio/lib/api/traversing";
 import CartItem from "../../interfaces/cartItem";
 import RecommendationsRepository from "../../repository/recommendationsRepository";
 
@@ -143,7 +142,7 @@ const isAddToShoppingCart = (text: string) => {
     "basket",
   ];
   return text.split(" ").some((word) => {
-    sampleWordsForCart.includes(
+    return sampleWordsForCart.includes(
       word.toLowerCase().replace(",", "").replace(".", "")
     );
   });
@@ -214,15 +213,13 @@ const isViewShoppingCart = (text: string) => {
   ];
 
   var indicator = 0;
-  text.split(" ").forEach((word) => {
+  return text.split(" ").some((word) => {
     let cleaned = word.toLowerCase().replace(",", "").replace(".", "");
     if (sampleInitialWordsForViewCart.includes(cleaned)) indicator++;
 
     if (sampleDeterminerWordsForViewCart.includes(cleaned) && indicator === 1)
       return true;
   });
-
-  return false;
 };
 
 const callGetCartItemsAPI = async (userId: string) => {
