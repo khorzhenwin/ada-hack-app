@@ -347,7 +347,7 @@ export default async function handler(req, res) {
 
     await callWhatsAppAPI(
       to,
-      "Proceeding to checkout now.\n[insert link to checkout screenshot here]"
+      "Proceeding to checkout now.\nhttps://i.postimg.cc/wjhj8xDB/check-out-995885ujjrj.jpg"
     );
     return;
   } else {
