@@ -1,5 +1,6 @@
 import CartItem from "../../interfaces/cartItem";
 import RecommendationsRepository from "../../repository/recommendationsRepository";
+import querystring from "querystring";
 
 const craftRecommendationsMessage = (recommendations: Array<any>) => {
   let message = "Here are some recommendations for you:\n\n";
@@ -68,7 +69,7 @@ const callWhatsAppAPI = async (to, response) => {
   const res = await fetch(whatsappEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(message),
+    body: querystring.stringify(message),
   });
   return Promise.resolve(res.json());
 };
@@ -83,7 +84,7 @@ const callChatAPI = async (text, to) => {
   const chatResponse = await fetch(chatEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    body: querystring.stringify(body),
   });
 
   return Promise.resolve(chatResponse.json());
@@ -94,7 +95,7 @@ const callKeywordsAPI = async (text) => {
   const keywordsResponse = await fetch(keywordsEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ input: text }),
+    body: querystring.stringify({ input: text }),
   });
   return Promise.resolve(keywordsResponse.json());
 };
@@ -106,18 +107,11 @@ const callRecommendationsAPI = async (keywords, to) => {
   };
 
   const recommendationsEndpoint = `https://ada-hack-app.vercel.app/api/v2/recommendations`;
-  const recommendationsResponse = await fetch(recommendationsEndpoint, {
+  await fetch(recommendationsEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+    body: querystring.stringify(body),
   });
-
-  try {
-    const resp = recommendationsResponse.json();
-    return Promise.resolve(resp);
-  } catch {
-    return null;
-  }
 };
 
 const chatWithLLM = [

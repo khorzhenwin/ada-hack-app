@@ -4,6 +4,7 @@ import {
   getMudahMyProducts,
 } from "../../../data/scraping";
 import RecommendationsRepository from "../../../repository/recommendationsRepository";
+import querystring from "querystring";
 
 // POST Method
 export default async function handler(req, res) {
@@ -12,13 +13,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { category, pageNo = 1 } = req.query;
-  if (!category) {
-    res.status(400).json({ message: "Missing query parameters" });
-    return;
-  }
-
-  const to = req.body.to.toString();
+  const to = req.body.to;
   res.status(200).json({ message: "success" });
 
   const keywords = req.body.keywords.split(",");
@@ -29,18 +24,9 @@ export default async function handler(req, res) {
   // fetch recommendations from /api/recommendations
   for (const keyword of keywords) {
     // push 1 recommendation from each source for each keyword
-    const carousell = await getCarousellProducts(
-      keyword.toLowerCase().trim(),
-      pageNo
-    );
-    const iprice = await getIpriceProducts(
-      keyword.toLowerCase().trim(),
-      pageNo
-    );
-    const mudah = await getMudahMyProducts(
-      keyword.toLowerCase().trim(),
-      pageNo
-    );
+    const carousell = await getCarousellProducts(keyword.toLowerCase().trim());
+    const iprice = await getIpriceProducts(keyword.toLowerCase().trim());
+    const mudah = await getMudahMyProducts(keyword.toLowerCase().trim());
 
     if (carousell.length > 0) {
       carousell[0]["source"] = "Carousell";
@@ -76,7 +62,7 @@ export default async function handler(req, res) {
     groupedBySource[source].push(recommendation);
   });
 
-  RecommendationsRepository.addItemsByUserId(to, groupedBySource);
+  await RecommendationsRepository.addItemsByUserId(to, groupedBySource);
   await callWhatsAppAPI(to, craftRecommendationsMessage(recommendations));
 }
 
@@ -90,7 +76,7 @@ const callWhatsAppAPI = async (to, response) => {
   const res = await fetch(whatsappEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(message),
+    body: querystring.stringify(message),
   });
   return Promise.resolve(res.json());
 };

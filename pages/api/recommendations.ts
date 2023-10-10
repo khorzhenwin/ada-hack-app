@@ -2,9 +2,9 @@ import {
   getCarousellProducts,
   getIpriceProducts,
   getMudahMyProducts,
-  getLazadaProducts,
+  // getLazadaProducts,
 } from "../../data/scraping";
-import { getLazadaProductsFromAPI } from "../../data/api";
+// import { getLazadaProductsFromAPI } from "../../data/api";
 import { v4 as uuidv4 } from "uuid";
 
 // GET Method

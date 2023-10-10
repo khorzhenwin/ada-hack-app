@@ -6,6 +6,7 @@ import Cart from "../../../interfaces/cart";
 import CartRepository from "../../../repository/cartRepository";
 import Recommendations from "../../../interfaces/recommendations";
 import RecommendationsRepository from "../../../repository/recommendationsRepository";
+import querystring from "querystring";
 
 const { DiscussServiceClient } = require("@google-ai/generativelanguage");
 const { GoogleAuth } = require("google-auth-library");
@@ -21,7 +22,7 @@ const context =
   "An e-commerce shop assistant that recommends products to users based on their preferences.";
 const examples = [];
 
-const createNewChat = (userId: string) => {
+const createNewChat = async (userId: string) => {
   const id = uuidv4();
   const newChat: Chat = {
     id: id,
@@ -45,9 +46,9 @@ const createNewChat = (userId: string) => {
     carousell: [],
   };
 
-  CartRepository.add(cart);
-  ChatRepository.add(newChat);
-  RecommendationsRepository.add(recommendation);
+  await CartRepository.add(cart);
+  await ChatRepository.add(newChat);
+  await RecommendationsRepository.add(recommendation);
 
   return newChat;
 };
@@ -144,7 +145,7 @@ const callWhatsAppAPI = async (to, response) => {
   const res = await fetch(whatsappEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(message),
+    body: querystring.stringify(message),
   });
   return Promise.resolve(res.json());
 };
