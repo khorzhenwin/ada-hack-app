@@ -22,7 +22,7 @@ const context =
   "An e-commerce shop assistant that recommends products to users based on their preferences.";
 const examples = [];
 
-const createNewChat = (userId: string) => {
+const createNewChat = async (userId: string) => {
   const id = uuidv4();
   const newChat: Chat = {
     id: id,
@@ -46,9 +46,9 @@ const createNewChat = (userId: string) => {
     carousell: [],
   };
 
-  CartRepository.add(cart);
-  ChatRepository.add(newChat);
-  RecommendationsRepository.add(recommendation);
+  await CartRepository.add(cart);
+  await ChatRepository.add(newChat);
+  await RecommendationsRepository.add(recommendation);
 
   return newChat;
 };
