@@ -168,28 +168,36 @@ const addChoicesToCart = async (text: string, userId: string) => {
     (a, b) => parseInt(a[0]) - parseInt(b[0])
   );
 
-  const recommendedProducts = (
-    await RecommendationsRepository.findByUserId(userId)
-  ).data();
+  const recommendedProducts = await RecommendationsRepository.findByUserId(
+    userId
+  );
 
-  const sortedRecommendedProducts = [
-    ...recommendedProducts.lazada,
-    ...recommendedProducts.carousell,
-    ...recommendedProducts.mudah,
-    ...recommendedProducts.iprice,
-  ];
+  if (
+    recommendedProducts.data() !== (null || undefined) &&
+    recommendedProducts.exists()
+  ) {
+    // const sortedRecommendedProducts = [
+    //   ...recommendedProducts.data().lazada,
+    //   ...recommendedProducts.data().carousell,
+    //   ...recommendedProducts.data().mudah,
+    //   ...recommendedProducts.data().iprice,
+    // ];
 
-  var cart: CartItem[] = [];
-  sortedChoices.forEach((choice) => {
-    let product = sortedRecommendedProducts[parseInt(choice[0]) - 1];
-    product["quantity"] = choice[1] ? choice[1] : "1";
+    // var cart = [];
+    // sortedChoices.forEach((choice) => {
+    //   let product = sortedRecommendedProducts[parseInt(choice[0]) - 1];
+    //   product["quantity"] = choice[1] ? choice[1] : "1";
 
-    cart.push(product as any);
-  });
+    //   cart.push(product);
+    // });
 
-  await callPostCartItemsAPI(cart, userId);
+    // await callPostCartItemsAPI(cart, userId);
 
-  return "Items selected have been added to your cart!";
+    // return "Items selected have been added to your cart!";
+    return recommendedProducts.data();
+  }
+
+  return { text: "Your recommendation products are corrupted!" };
 };
 
 const callPostCartItemsAPI = async (item: CartItem[], userId: string) => {
