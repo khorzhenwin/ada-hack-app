@@ -11,8 +11,9 @@ export default async function handler(req, res) {
   req.body.to = req.body.to.toString(); // required
   req.body.text = req.body.text; // required
 
+  res.status(200).json({ message: "success" });
   await sendWhatsappMessage(req);
-  return res.status(200).json({ message: "success" });
+  return;
 }
 
 const sendWhatsappMessage = async (req) => {

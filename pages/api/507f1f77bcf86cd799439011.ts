@@ -114,6 +114,22 @@ const callRecommendationsAPI = async (keyword) => {
   }
 };
 
+const chatWithLLM = [
+  "recommend",
+  "recommendations",
+  "recommendation",
+  "suggestion",
+  "suggestions",
+  "suggestion",
+  "suggest",
+  "suggests",
+  "suggested",
+  "e-commerce",
+  "ecommerce",
+  "platforms",
+  "Malaysia",
+];
+
 const isAddToShoppingCart = (text: string) => {
   let sampleWordsForCart = [
     "cart",
@@ -247,23 +263,6 @@ export default async function handler(req, res) {
     return;
   }
 
-  // check if text contains "recommend", "recommendations", "recommendation" or "suggestion" or "suggestions" or "suggestion" or "suggest" or "suggests" or "suggested"
-  const chatWithLLM = [
-    "recommend",
-    "recommendations",
-    "recommendation",
-    "suggestion",
-    "suggestions",
-    "suggestion",
-    "suggest",
-    "suggests",
-    "suggested",
-    "e-commerce",
-    "ecommerce",
-    "platforms",
-    "Malaysia",
-  ];
-
   const words = text.split(" ");
   const hasRecommendation = words.some((word) => chatWithLLM.includes(word));
 
@@ -287,7 +286,7 @@ export default async function handler(req, res) {
       //   recommendationsResponse.lazada[0].source = "Lazada";
       //   recommendations.push(recommendationsResponse.lazada[0]);
       // }
-      if (recommendationsResponse.carousell && recommendationsResponse.carousell.length > 0) {
+      if (recommendationsResponse.carousell.length > 0) {
         recommendationsResponse.carousell[0].source = "Carousell";
         recommendations.push(recommendationsResponse.carousell[0]);
       }
