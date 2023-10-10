@@ -20,23 +20,27 @@ export default async function handler(req, res) {
     return;
   }
 
-  let lazada;
-  try {
-    lazada = await getLazadaProductsFromAPI(category, pageNo);
-  } catch (error) {
-    try {
-      lazada = await getLazadaProducts(category, pageNo);
-    } catch (error) {
-      lazada = [];
-    }
-  }
-  const carousell = await getCarousellProducts(category, pageNo);
-  const iprice = await getIpriceProducts(category, pageNo);
-  const mudah = await getMudahMyProducts(category, pageNo);
+  // let lazada;
+  let carousell;
+  let iprice;
+  let mudah;
+
+  // try {
+  //   lazada = await getLazadaProductsFromAPI(category, pageNo);
+  // } catch (error) {
+  //   try {
+  //     lazada = await getLazadaProducts(category, pageNo);
+  //   } catch (error) {
+  //     lazada = [];
+  //   }
+  // }
+  carousell = await getCarousellProducts(category, pageNo);
+  iprice = await getIpriceProducts(category, pageNo);
+  mudah = await getMudahMyProducts(category, pageNo);
   // currently, recommendations does not need to be stored as they will be added directly to the cart after user selects them
 
   const response = {
-    lazada,
+    // lazada,
     carousell,
     iprice,
     mudah,

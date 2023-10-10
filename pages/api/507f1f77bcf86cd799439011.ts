@@ -114,6 +114,22 @@ const callRecommendationsAPI = async (keyword) => {
   }
 };
 
+const chatWithLLM = [
+  "recommend",
+  "recommendations",
+  "recommendation",
+  "suggestion",
+  "suggestions",
+  "suggestion",
+  "suggest",
+  "suggests",
+  "suggested",
+  "e-commerce",
+  "ecommerce",
+  "platforms",
+  "Malaysia",
+];
+
 const isAddToShoppingCart = (text: string) => {
   let sampleWordsForCart = [
     "cart",
@@ -246,23 +262,6 @@ export default async function handler(req, res) {
     res.status(401).json({ message: "Unauthorized" });
     return;
   }
-
-  // check if text contains "recommend", "recommendations", "recommendation" or "suggestion" or "suggestions" or "suggestion" or "suggest" or "suggests" or "suggested"
-  const chatWithLLM = [
-    "recommend",
-    "recommendations",
-    "recommendation",
-    "suggestion",
-    "suggestions",
-    "suggestion",
-    "suggest",
-    "suggests",
-    "suggested",
-    "e-commerce",
-    "ecommerce",
-    "platforms",
-    "Malaysia",
-  ];
 
   const words = text.split(" ");
   const hasRecommendation = words.some((word) => chatWithLLM.includes(word));
