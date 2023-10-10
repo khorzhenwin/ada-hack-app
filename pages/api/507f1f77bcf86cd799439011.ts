@@ -30,6 +30,8 @@ const craftRecommendationsMessage = (recommendations: Array<any>) => {
   return message;
 };
 
+const craftCartMessage = (cartItems: CartItem[]) => {};
+
 const callWhatsAppAPI = async (to, response) => {
   const message = {
     to: to,
@@ -290,6 +292,8 @@ export default async function handler(req, res) {
 
     await callWhatsAppAPI(to, result);
   } else if (isViewShoppingCart(text)) {
+    const cart = await callGetCartItemsAPI(to);
+    const cartItems = cart.cartItems;
   } else {
     res.status(200).json({ message: "success" });
     // chat with LLM by calling /api/chat

@@ -24,7 +24,11 @@ export default async function handler(req, res) {
   try {
     lazada = await getLazadaProductsFromAPI(category, pageNo);
   } catch (error) {
-    lazada = await getLazadaProducts(category, pageNo);
+    try {
+      lazada = await getLazadaProducts(category, pageNo);
+    } catch (error) {
+      lazada = [];
+    }
   }
   const carousell = await getCarousellProducts(category, pageNo);
   const iprice = await getIpriceProducts(category, pageNo);
