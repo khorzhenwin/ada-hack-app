@@ -29,7 +29,12 @@ export default async function handler(req, res) {
     User: I want to purchase something for my newly decorated kitchen.
     output: Refrigerator,Oven,Plates,Dish Towel,Utensils
   
-    Provide whats commonly purchased based on your knowledge. Provide between 1 - 5 different type of items. Every comma should not have any blank spaces. If you can't understand, just return empty response.
+    Rules:
+    1. Provide whats commonly purchased based on your knowledge. 
+    2. Provide between 1 - 5 different type of items. 
+    3. Every comma should not have any blank spaces. 
+    4. If there is only branding, make sure to add the product's type like "Adidas Sneakers", to make the search more specific.
+    5. If you can't understand, just return empty response.
 
     ${input}`;
 
