@@ -61,8 +61,8 @@ const craftCartMessage = (cartItems: CartItem[]) => {
 
 const callWhatsAppAPI = async (to, response) => {
   const message = {
-    to: to,
-    text: response,
+    to: to.toString(),
+    text: response.toString(),
   };
 
   const whatsappEndpoint = "https://b1a0-192-228-206-41.ngrok-free.app/api/whatsapp";
