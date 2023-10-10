@@ -79,7 +79,7 @@ const callChatAPI = async (text, to) => {
     userId: to,
   };
 
-  const chatEndpoint = "https://ada-hack-app.vercel.app/api/chat";
+  const chatEndpoint = "https://ada-hack-app.vercel.app/v2/api/chat";
   const chatResponse = await fetch(chatEndpoint, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -99,11 +99,17 @@ const callKeywordsAPI = async (text) => {
   return Promise.resolve(keywordsResponse.json());
 };
 
-const callRecommendationsAPI = async (keyword) => {
-  const recommendationsEndpoint = `https://ada-hack-app.vercel.app/api/recommendations?category=${keyword}`;
+const callRecommendationsAPI = async (keywords, to) => {
+  const body = {
+    keywords: keywords,
+    to: to,
+  };
+
+  const recommendationsEndpoint = `https://ada-hack-app.vercel.app/api/v2/recommendations`;
   const recommendationsResponse = await fetch(recommendationsEndpoint, {
-    method: "GET",
+    method: "POST",
     headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
   });
 
   try {
@@ -268,71 +274,8 @@ export default async function handler(req, res) {
     res.status(200).json({ message: "success at recommendation" });
     // get keywords from /api/keywords
     const keywordsResponse = await callKeywordsAPI(text);
-    const keywords = keywordsResponse.keywords.split(",");
+    await callRecommendationsAPI(keywordsResponse.keywords, to);
 
-    const recommendations = [];
-    let counter = 0;
-
-    // fetch recommendations from /api/recommendations
-    for (const keyword of keywords) {
-      // push 1 recommendation from each source for each keyword
-      const recommendationsResponse = await callRecommendationsAPI(
-        keyword.toLowerCase().replace(/\s+/g, "-").trim()
-      );
-
-      // if (recommendationsResponse.lazada.length > 0) {
-      //   recommendationsResponse.lazada[0].source = "Lazada";
-      //   recommendations.push(recommendationsResponse.lazada[0]);
-      // }
-      if (
-        recommendationsResponse.carousell &&
-        recommendationsResponse.carousell.length > 0
-      ) {
-        recommendationsResponse.carousell[0].source = "Carousell";
-        recommendations.push(recommendationsResponse.carousell[0]);
-      }
-      if (recommendationsResponse.mudah.length > 0) {
-        recommendationsResponse.mudah[0].source = "Mudah.my";
-        recommendations.push(recommendationsResponse.mudah[0]);
-      }
-      if (recommendationsResponse.iprice.length > 0) {
-        recommendationsResponse.iprice[0].source = "iPrice";
-        recommendations.push(recommendationsResponse.iprice[0]);
-      }
-      counter++;
-
-      // if counter is 3, break. Failsafe from spam calling
-      if (counter === 3) break;
-    }
-
-    if (recommendations.length === 0) {
-      await callWhatsAppAPI(
-        to,
-        "Sorry, we couldn't find any recommendations for you. Please try again."
-      );
-      return;
-    }
-
-    // testing group by source
-    const groupedBySource = {};
-    recommendations.forEach((recommendation) => {
-      const source = recommendation.source;
-      groupedBySource[source] = groupedBySource[source] || [];
-      groupedBySource[source].push(recommendation);
-    });
-
-    // testing implementing adding recommendations to db so it can be accessed when adding to cart
-    RecommendationsRepository.addItemsByUserId(to, groupedBySource);
-
-    // call /api/whatsapp to send message to user
-    await callWhatsAppAPI(to, craftRecommendationsMessage(recommendations));
-    return;
-  } else if (isAddToShoppingCart(text)) {
-    res.status(200).json({ message: "success at add to cart" });
-    const result = await addChoicesToCart(text, to);
-
-    // call /api/whatsapp to send message to user
-    await callWhatsAppAPI(to, result);
     return;
   } else if (isViewShoppingCart(text)) {
     res.status(200).json({ message: "success at view cart" });
@@ -353,10 +296,7 @@ export default async function handler(req, res) {
   } else {
     res.status(200).json({ message: "success at error" });
     // chat with LLM by calling /api/chat
-    const chatResponse = await callChatAPI(text, to);
-
-    // call /api/whatsapp to send message to user
-    await callWhatsAppAPI(to, chatResponse.response);
+    await callChatAPI(text, to);
     return;
   }
 }
