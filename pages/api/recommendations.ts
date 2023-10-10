@@ -14,7 +14,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  const { category, pageNo = 1, userId } = req.query;
+  const { category, pageNo = 1 } = req.query;
   if (!category) {
     res.status(400).json({ message: "Missing query parameters" });
     return;

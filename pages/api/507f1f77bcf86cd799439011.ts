@@ -19,7 +19,7 @@ const craftRecommendationsMessage = (recommendations: Array<any>) => {
 
   let count = 1;
   resultArray.forEach((recommendations) => {
-    message += `=== *Source: ${recommendations[0].source}* ===`;
+    message += `=== *Source: ${recommendations[0].source}* ===\n`;
     recommendations.forEach((recommendation) => {
       message += `${count++}. *${recommendation.name}*\nRM ${
         recommendation.price
