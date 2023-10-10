@@ -34,7 +34,7 @@ const sendWhatsappMessage = async (req) => {
   });
 
   if (res.status === 200 || res.status === 201) {
-    return await res.json();
+    return res.json();
   } else {
     return null;
   }
