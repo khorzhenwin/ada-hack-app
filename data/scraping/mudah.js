@@ -36,15 +36,14 @@ export async function getMudahMyProducts(product = "", pageNo = 1) {
 
     // The product image url
     var image_html_class = "";
-    if ($("img.mw1291").length != 0) image_html_class = ".mw1291";
-    else if ($("img.mw357").length != 0) image_html_class = "img.mw357";
+    if ($("img.mw357").length != 0) image_html_class = "img.mw357";
     else if ($("img.mw1318").length != 0) image_html_class = "img.mw1318";
     else {
       // checking if there are any products found
       console.log(`==> No products of '${product}' found on mudah.my`);
       return [];
     }
-    // console.log(image_html_class + " : " + $(image_html_class).length);
+    console.log(image_html_class + " : " + $(image_html_class).length);
     $(image_html_class).each((i, e) => {
       product_array.push({
         image: "",
@@ -68,6 +67,8 @@ export async function getMudahMyProducts(product = "", pageNo = 1) {
       name_html_class = ".sc-bEjcJn.fEleSG";
     else if ($(".sc-bmyXtO.kLXReI").length != 0)
       name_html_class = ".sc-bmyXtO.kLXReI";
+    else if ($(".sc-eTuwsz.kOdPxe").length != 0)
+      name_html_class = ".sc-eTuwsz.kOdPxe";
 
     console.log(name_html_class + " : " + $(name_html_class).length);
     $(name_html_class).each((i, e) => {
@@ -128,6 +129,8 @@ export async function getMudahMyProducts(product = "", pageNo = 1) {
       productURL_html_class = ".sc-kfGgVZ.cSAGbq";
     else if ($(".sc-bEjcJn.fEleSG").length != 0)
       productURL_html_class = ".sc-bEjcJn.fEleSG";
+    else if ($(".sc-eTuwsz.kOdPxe").length != 0)
+      productURL_html_class = ".sc-eTuwsz.kOdPxe";
     else productURL_html_class = ".sc-etwtAo.jTnCIh";
     // console.log(productURL_html_class + " : " + $(productURL_html_class).length);
     $(productURL_html_class).each((i, e) => {
