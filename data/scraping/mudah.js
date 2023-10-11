@@ -36,8 +36,9 @@ export async function getMudahMyProducts(product = "", pageNo = 1) {
 
     // The product image url
     var image_html_class = "";
-    if ($(".mw1291").length != 0) image_html_class = ".mw1291";
-    else if ($(".mw357").length != 0) image_html_class = ".mw357";
+    if ($("img.mw1291").length != 0) image_html_class = ".mw1291";
+    else if ($("img.mw357").length != 0) image_html_class = "img.mw357";
+    else if ($("img.mw1318").length != 0) image_html_class = "img.mw1318";
     else {
       // checking if there are any products found
       console.log(`==> No products of '${product}' found on mudah.my`);
