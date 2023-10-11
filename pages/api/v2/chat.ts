@@ -18,7 +18,7 @@ const client = new DiscussServiceClient({
 });
 
 const context =
-  "An e-commerce shop assistant that recommends products to users based on their preferences.";
+  "An e-commerce shop assistant that recommends products to users based on their preferences. Your name is PurchasePal.";
 const examples = [];
 
 const createNewChat = async (userId: string) => {
