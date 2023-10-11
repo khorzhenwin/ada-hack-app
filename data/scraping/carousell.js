@@ -33,25 +33,25 @@ export async function getCarousellProducts(product = "", pageNo = 1) {
     const $ = cheerio.load(response_request.data);
 
     // checking if there are any products found
-    if ($(".D_or.D_of.D_os.D_ow.D_oz.D_oB.D_oE.D_o_.D_oI").length == 0) {
+    if ($(".D_pw.D_ov.D_px.D_pA.D_pE.D_pH.D_pJ.D_pF.D_pN").length == 0) {
       console.log(`==> No products of '${product}' found on Carousell`);
       return [];
     }
 
     // The product image url
-    $(".D_zc.D_ZG").each((i, e) => {
+    $(".D_xX.D_Zy").each((i, e) => {
       product_array.push({
         image: $(e).attr().src.replace(/(\s+)/g, " ").trim(),
       });
     });
 
     // The product names
-    $(".D_or.D_of.D_os.D_ow.D_oz.D_oB.D_oE.D_o_.D_oI").each((i, e) => {
+    $(".D_pw.D_ov.D_px.D_pA.D_pE.D_pH.D_pJ.D_pF.D_pN").each((i, e) => {
       product_array[i]["name"] = $(e).text().replace(/(\s+)/g, " ").trim();
     });
 
     // The product prices
-    $(".D_or.D_of.D_os.D_ow.D_oy.D_oB.D_oF.D_oH").each((i, e) => {
+    $(".D_pw.D_ov.D_px.D_pA.D_pC.D_pH.D_pK.D_pM").each((i, e) => {
       product_array[i]["price"] =
         $(e)
           .text()
@@ -63,7 +63,7 @@ export async function getCarousellProducts(product = "", pageNo = 1) {
     });
 
     // The product store name (seller name)
-    $(".D_or.D_of.D_os.D_ow.D_oy.D_oB.D_oF.D_oI").each((i, e) => {
+    $(".D_pw.D_ov.D_px.D_pA.D_pC.D_pH.D_pK.D_pN").each((i, e) => {
       product_array[i]["seller_name"] = $(e)
         .text()
         .replace(/(\s+)/g, " ")
@@ -72,7 +72,7 @@ export async function getCarousellProducts(product = "", pageNo = 1) {
     });
 
     // The product page url
-    $("div.D_Ai a:not(.D_An.D_oL)").each((i, e) => {
+    $("div.D_AB a:not(.D_AH.D_pW)").each((i, e) => {
       product_array[i]["url"] =
         "https://www.carousell.com.my" + $(e).attr().href.trim();
     });
